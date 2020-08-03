@@ -1,14 +1,31 @@
 package main
 
 import (
-	"fmt"
+	"log"
+	"os"
 	"time"
 
 	"github.com/arkiant/freegames/freegames"
+	"github.com/arkiant/freegames/mongo"
 	"github.com/arkiant/freegames/unreal"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	dbURL := os.Getenv("DATABASE_URL")
+	if dbURL == "" {
+		if godotenv.Load(".env") != nil {
+			panic("Can't load .env file")
+		}
+
+		dbURL = os.Getenv("DATABASE_URL")
+	}
+
+	db, err := mongo.NewMongoRepository(dbURL, "freegames", 5)
+	if err != nil {
+		panic(err)
+	}
 
 	const OnceADay = time.Hour * 24
 
@@ -20,27 +37,12 @@ func main() {
 	ticker := time.NewTicker(OnceADay)
 	defer ticker.Stop()
 
-	getAllFreeGames(pool)
+	fg := freegames.GetAllFreeGames(pool, db)
+	log.Printf("Found %v new free games", len(fg))
 
 	for range ticker.C {
-		getAllFreeGames(pool)
+		fg = freegames.GetAllFreeGames(pool, db)
+		log.Printf("Found %v new free games", len(fg))
 	}
 
-}
-
-func getAllFreeGames(pool []freegames.Platform) {
-	freeGames := make([]freegames.Game, 0)
-	for _, v := range pool {
-		games, err := v.Run()
-		if err != nil {
-			panic(err)
-		}
-		if len(games) > 0 {
-			for _, g := range games {
-				freeGames = append(freeGames, g)
-			}
-		}
-	}
-
-	fmt.Printf("Freegames: %v", freeGames)
 }

@@ -1,4 +1,4 @@
-# Freegames
+# Freegames (WIP)
 
 This repository is a experiment in go, we'll try to create a bot that notifies of free games.
 
@@ -46,4 +46,10 @@ $ docker-compose up
 ```
 $ docker build -t github.com/arkiant/freegames:latest .
 $ docker run --name freegames github.com/arkiant/freegames:latest
+```
+
+## Mongo database local
+
+```
+$ docker run --name mongo -p 27017:27017 mongo:latest
 ```

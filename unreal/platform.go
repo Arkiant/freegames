@@ -33,16 +33,12 @@ type unrealRequest struct {
 
 type unrealGames struct{}
 
-/*
-NewUnrealGames create a new unrealGames instance (constructor)
-*/
+// NewUnrealGames create a new unrealGames instance (constructor)
 func NewUnrealGames() *unrealGames {
 	return new(unrealGames)
 }
 
-/*
-Run fetch free games from unreal store
-*/
+//Run fetch free games from unreal store
 func (u *unrealGames) Run() ([]freegames.Game, error) {
 
 	games := make([]freegames.Game, 0, 4)
@@ -89,9 +85,12 @@ func (u *unrealGames) Run() ([]freegames.Game, error) {
 		}
 
 		game := freegames.Game{
-			Name:  v.Title,
-			Photo: photo,
-			URL:   fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
+			Name:      v.Title,
+			Photo:     photo,
+			Platform:  "unreal",
+			URL:       fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
 		}
 
 		games = append(games, game)
