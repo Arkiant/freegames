@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN rm .env
-
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
 FROM alpine:latest 
