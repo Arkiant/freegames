@@ -32,3 +32,18 @@ For this example we will try to implement two different clients:
 ## APP
 
 Here is the entire business logic of the non-implementation application.
+
+# Docker
+
+## Execution with docker-compose
+
+```
+$ docker-compose up
+```
+
+## Execution without docker-compose
+
+```
+$ docker build -t github.com/arkiant/freegames:latest .
+$ docker run --name freegames github.com/arkiant/freegames:latest
+```

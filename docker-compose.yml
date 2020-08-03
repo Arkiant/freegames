@@ -1,0 +1,11 @@
+version: "3.1"
+services:
+  freegames:
+    build: .
+    links:
+      - "db:database"
+  db:
+    image: "mongo"
+    restart: always
+    ports:
+      - "27017:27017"
