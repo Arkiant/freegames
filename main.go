@@ -1,9 +1,7 @@
 package main
 
 import (
-	"log"
 	"os"
-	"time"
 
 	"github.com/arkiant/freegames/freegames"
 	"github.com/arkiant/freegames/mongo"
@@ -27,22 +25,8 @@ func main() {
 		panic(err)
 	}
 
-	const OnceADay = time.Hour * 24
-
-	pool := []freegames.Platform{
-		unreal.NewUnrealGames(),
-	}
-
-	// Once a day check for free games
-	ticker := time.NewTicker(OnceADay)
-	defer ticker.Stop()
-
-	fg := freegames.GetAllFreeGames(pool, db)
-	log.Printf("Found %v new free games", len(fg))
-
-	for range ticker.C {
-		fg = freegames.GetAllFreeGames(pool, db)
-		log.Printf("Found %v new free games", len(fg))
-	}
+	fg := freegames.NewFreeGames(&db)
+	fg.AddPlatform(unreal.NewUnrealGames())
+	fg.Run()
 
 }
