@@ -12,8 +12,14 @@ type unrealRequest struct {
 		Catalog struct {
 			SearchStore struct {
 				Elements []struct {
-					Title     string `json:"title"`
-					Price     string `json:"price"`
+					Title string `json:"title"`
+					Price []struct {
+						TotalPrice []struct {
+							OriginalPrice string `json:"originalPrice"`
+							DiscountPrice string `json:"discountPrice"`
+							Discount      string `json:"discount"`
+						} `json:"totalPrice"`
+					} `json:"price"`
 					KeyImages []struct {
 						URL  string `json:"url"`
 						Type string `json:"type"`
