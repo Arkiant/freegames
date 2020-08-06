@@ -25,6 +25,7 @@ func (u *unrealGames) Run() ([]freegames.Game, error) {
 	games := make([]freegames.Game, 0, 4)
 
 	jsonData := createQueryFreeGames()
+	fmt.Println(string(jsonData))
 	request, err := createRequest(jsonData)
 	if err != nil {
 		return games, err

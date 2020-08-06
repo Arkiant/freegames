@@ -5,7 +5,7 @@ This repository is a experiment in go, we'll try to create a bot that notifies o
 ## Requirements
 
 - Daily check for free games
-- If you find new games, save them to the database and notify all customers
+- If you find new games, save them to the database and notify all clients
 - If any client requests about new games, return the new games from the database
 
 ## Architecture
