@@ -74,7 +74,7 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 
 // IsFree check if a game is currently free or not
 func (u *epicGames) IsFree(game freegames.Game) bool {
-
+	//TODO: Create request to check if currently is free game
 	return true
 }
 
