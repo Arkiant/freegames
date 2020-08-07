@@ -20,34 +20,36 @@ func NewDiscordClient(db *freegames.Repository) *Client {
 	return &Client{db: db}
 }
 
+// TODO: Create complete discord configuration
+
 // Configure discord bot
-func (d *Client) Configure(token string) *Client {
-	d.token = token
-	return d
+func (c *Client) Configure(token string) *Client {
+	c.token = token
+	return c
 }
 
 // GetName get bot name
-func (d *Client) GetName() string {
+func (c *Client) GetName() string {
 	return "Discord"
 }
 
 // Execute discord bot
-func (d *Client) Execute() error {
-	if d.token == "" {
+func (c *Client) Execute() error {
+	if c.token == "" {
 		return errors.New("Token need to be configured")
 	}
 
 	var err error
 
-	d.dg, err = discordgo.New("Bot " + d.token)
+	c.dg, err = discordgo.New("Bot " + c.token)
 	if err != nil {
 		return err
 	}
 
-	d.dg.AddHandler(messageCreate)
-	d.dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages)
+	c.dg.AddHandler(c.freeGamesCommand)
+	c.dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages)
 
-	err = d.dg.Open()
+	err = c.dg.Open()
 	if err != nil {
 		return err
 	}
@@ -56,18 +58,58 @@ func (d *Client) Execute() error {
 }
 
 // Close function to close bot
-func (d *Client) Close() {
-	d.dg.Close()
+func (c *Client) Close() {
+	c.dg.Close()
 }
 
-func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+// SendMessage send message to discord client
+func (c *Client) SendMessage() error {
+	fmt.Println("Sending message...")
+	for _, guild := range c.dg.State.Guilds {
+		channels, _ := c.dg.GuildChannels(guild.ID)
 
+		fmt.Printf("Connected to guild: %s\n", guild.Name)
+
+		for _, channel := range channels {
+			// Check if channel is a guild text channel and not a voice or DM channel
+			if channel.Type != discordgo.ChannelTypeGuildText {
+				continue
+			}
+
+			fmt.Printf("Connected to channel: %s\n", channel.Name)
+
+			c.sendMessageToChannel(channel.ID)
+		}
+	}
+	return nil
+}
+
+// sendMessageToChannel
+func (c *Client) sendMessageToChannel(channelID string) error {
+	database := *c.db
+	games, err := database.GetGames()
+	if err != nil {
+		return err
+	}
+
+	for _, v := range games {
+		c.dg.ChannelMessageSend(channelID, v.URL)
+	}
+
+	return nil
+}
+
+// freeGamesCommand execute freegames command
+func (c *Client) freeGamesCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
 	// TODO: USE COMMAND PATTERN
 	if m.Content == "!freegames" {
-		fmt.Println("Getting freegames!")
+		err := c.sendMessageToChannel(m.ChannelID)
+		if err != nil {
+			fmt.Printf("Some error ocurried with command: %s", err.Error())
+		}
 	}
 }

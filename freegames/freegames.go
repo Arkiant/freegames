@@ -26,11 +26,12 @@ func NewFreeGames(db *Repository) *Freegames {
 
 // Run execute app logic
 func (f *Freegames) Run() {
+	// Execute clients
+	executeClients(f)
+
 	// Execute service in background
 	go executeService(f)
 
-	// Execute clients
-	executeClients(f)
 }
 
 // Close all connections successful
@@ -51,6 +52,10 @@ func executeService(f *Freegames) {
 			og := deleteOldFreeGames(fg, platform, *f.db)
 			log.Printf("Deleted %v old free games from platform: %s", len(og), platform.GetName())
 		}
+
+		if len(fg) > 0 {
+			sendGamesToClientsConnected(f)
+		}
 	}
 
 	// Execute functionality at runtime first time
@@ -59,4 +64,15 @@ func executeService(f *Freegames) {
 		// Execute functionality ticker time
 		do()
 	}
+}
+
+func sendGamesToClientsConnected(f *Freegames) {
+	for _, v := range f.clients {
+		log.Printf("Sending Message to: %s\n", v.GetName())
+		err := v.SendMessage()
+		if err != nil {
+			log.Printf("Some error ocurried: %s", err.Error())
+		}
+	}
+
 }

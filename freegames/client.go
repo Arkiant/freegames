@@ -2,10 +2,12 @@ package freegames
 
 import "log"
 
+// Client abstraction
 type Client interface {
 	Execute() error
 	GetName() string
 	Close()
+	SendMessage() error
 }
 
 // AddClient using chain patter we can add multiple clients to notify
