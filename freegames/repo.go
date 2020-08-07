@@ -4,5 +4,6 @@ package freegames
 type Repository interface {
 	Exists(game Game) bool
 	GetGames() ([]Game, error)
-	Store(games Game) error
+	Store(game Game) error
+	Delete(game Game) error
 }

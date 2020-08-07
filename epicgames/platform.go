@@ -1,4 +1,4 @@
-package unreal
+package epicgames
 
 import (
 	"encoding/json"
@@ -12,20 +12,19 @@ import (
 
 const graphqlURL = "https://www.epicgames.com/store/backend/graphql-proxy"
 
-type unrealGames struct{}
+type epicGames struct{}
 
-// NewUnrealGames create a new unrealGames instance (constructor)
-func NewUnrealGames() *unrealGames {
-	return new(unrealGames)
+// NewEpicGames create a new epicgames instance (constructor)
+func NewEpicGames() *epicGames {
+	return new(epicGames)
 }
 
-//Run fetch free games from unreal store
-func (u *unrealGames) Run() ([]freegames.Game, error) {
+//Run fetch free games from epicgames store
+func (u *epicGames) Run() ([]freegames.Game, error) {
 
 	games := make([]freegames.Game, 0, 4)
 
 	jsonData := createQueryFreeGames()
-	fmt.Println(string(jsonData))
 	request, err := createRequest(jsonData)
 	if err != nil {
 		return games, err
@@ -40,7 +39,7 @@ func (u *unrealGames) Run() ([]freegames.Game, error) {
 	defer response.Body.Close()
 	data, _ := ioutil.ReadAll(response.Body)
 
-	rq := unrealRequest{}
+	rq := epicgamesRequest{}
 	json.Unmarshal(data, &rq)
 
 	for _, v := range rq.Data.Catalog.SearchStore.Elements {
@@ -56,7 +55,7 @@ func (u *unrealGames) Run() ([]freegames.Game, error) {
 		game := freegames.Game{
 			Name:      v.Title,
 			Photo:     photo,
-			Platform:  "unreal",
+			Platform:  "EpicGames",
 			URL:       fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
@@ -67,4 +66,14 @@ func (u *unrealGames) Run() ([]freegames.Game, error) {
 
 	return games, nil
 
+}
+
+// IsFree check if a game is currently free or not
+func (u *epicGames) IsFree(game freegames.Game) bool {
+
+	return false
+}
+
+func (u *epicGames) GetName() string {
+	return "EpicGames"
 }

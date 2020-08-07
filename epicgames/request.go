@@ -1,4 +1,4 @@
-package unreal
+package epicgames
 
 import (
 	"bytes"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type unrealRequest struct {
+type epicgamesRequest struct {
 	Data struct {
 		Catalog struct {
 			SearchStore struct {

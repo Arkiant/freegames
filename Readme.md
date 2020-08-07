@@ -16,7 +16,7 @@ We will proceed to explain the architecture of the system. We don't want to be t
 
 ### Platform
 
-Are the gaming platforms inside the microservice, for example we have unreal store inside to check free games for this platform.
+Are the gaming platforms inside the microservice, for example we have epicgames store inside to check free games for this platform.
 
 ### Repo
 

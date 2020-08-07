@@ -12,10 +12,10 @@ import (
 )
 
 type mongoRepository struct {
-	client   *mongo.Client
-	database string
+	client     *mongo.Client
+	database   string
 	collection string
-	timeout  time.Duration
+	timeout    time.Duration
 }
 
 func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
@@ -35,8 +35,8 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 // NewMongoRepository create a new mongo repository
 func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (freegames.Repository, error) {
 	repo := &mongoRepository{
-		timeout:  time.Duration(mongoTimeout) * time.Second,
-		database: mongoDB,
+		timeout:    time.Duration(mongoTimeout) * time.Second,
+		database:   mongoDB,
 		collection: "currentFreeGames",
 	}
 	client, err := newMongoClient(mongoURL, mongoTimeout)
@@ -49,7 +49,7 @@ func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (freegames.R
 
 // GetGames get all current free games
 func (r *mongoRepository) GetGames() ([]freegames.Game, error) {
-		panic("Not implemented")
+	panic("Not implemented")
 }
 
 // Exists check if a game exists in database
@@ -82,4 +82,9 @@ func (r *mongoRepository) Store(game freegames.Game) error {
 		return err
 	}
 	return nil
+}
+
+// Delete a old free game from the database
+func (r *mongoRepository) Delete(game freegames.Game) error {
+	panic("Not implemented")
 }

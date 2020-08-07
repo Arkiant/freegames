@@ -31,20 +31,29 @@ func (f *Freegames) AddPlatform(platform Platform) *Freegames {
 
 // Run execute app logic
 func (f *Freegames) Run() {
-	// Once a day check for free games
+
 	ticker := time.NewTicker(OnceADay)
 	defer ticker.Stop()
 
-	fg := getAllFreeGames(f.pool, *f.db)
-	log.Printf("Found %v new free games", len(fg))
+	do := func() {
+		for _, platform := range f.pool {
+			og := deleteOldFreeGames(platform, *f.db)
+			log.Printf("Deleted %v old free games from platform: %s", len(og), platform.GetName())
+		}
 
-	for range ticker.C {
-		fg = getAllFreeGames(f.pool, *f.db)
+		fg := getAllFreeGames(f.pool, *f.db)
 		log.Printf("Found %v new free games", len(fg))
+	}
+
+	// Execute functionality at runtime first time
+	do()
+	for range ticker.C {
+		// Execute functionality ticker time
+		do()
 	}
 }
 
-// GetAllFreeGames get all free games from all injected platforms
+// getAllFreeGames from all injected platforms
 func getAllFreeGames(pool []Platform, db Repository) []Game {
 	freeGames := make([]Game, 0)
 	for _, v := range pool {
@@ -60,6 +69,27 @@ func getAllFreeGames(pool []Platform, db Repository) []Game {
 					freeGames = append(freeGames, g)
 				}
 			}
+		}
+	}
+
+	return freeGames
+}
+
+// deleteAllFreeGames from the database
+func deleteOldFreeGames(platform Platform, db Repository) []Game {
+	freeGames := make([]Game, 0)
+	allGames, err := db.GetGames()
+	if err != nil {
+		return freeGames
+	}
+
+	for _, game := range allGames {
+		if !platform.IsFree(game) {
+			err := db.Delete(game)
+			if err != nil {
+				return freeGames
+			}
+			freeGames = append(freeGames, game)
 		}
 	}
 

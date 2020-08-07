@@ -3,9 +3,9 @@ package main
 import (
 	"os"
 
+	"github.com/arkiant/freegames/epicgames"
 	"github.com/arkiant/freegames/freegames"
 	"github.com/arkiant/freegames/mongo"
-	"github.com/arkiant/freegames/unreal"
 	"github.com/joho/godotenv"
 )
 
@@ -34,6 +34,6 @@ func main() {
 	}
 
 	fg := freegames.NewFreeGames(&db)
-	fg.AddPlatform(unreal.NewUnrealGames()).Run()
+	fg.AddPlatform(epicgames.NewEpicGames()).Run()
 
 }
