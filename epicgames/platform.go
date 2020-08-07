@@ -58,7 +58,7 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 			game := freegames.Game{
 				Name:      v.Title,
 				Photo:     photo,
-				Platform:  "EpicGames",
+				Platform:  u.GetName(),
 				URL:       fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
 				CreatedAt: time.Now(),
 				UpdatedAt: time.Now(),
