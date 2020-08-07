@@ -92,7 +92,7 @@ func deleteOldFreeGames(currentFreeGames []Game, platform Platform, db Repositor
 		}
 
 		if !deleted {
-			if !platform.IsFree(game) {
+			if !platform.IsFreeGame(game) {
 				err := db.Delete(game)
 				if err != nil {
 					return freeGames

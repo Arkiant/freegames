@@ -11,6 +11,7 @@ import (
 )
 
 const graphqlURL = "https://www.epicgames.com/store/backend/graphql-proxy"
+const gameInfoURL = "https://store-content.ak.epicgames.com/api/es-ES/content/products/%s"
 
 type epicGames struct{}
 
@@ -39,13 +40,11 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 	defer response.Body.Close()
 	data, _ := ioutil.ReadAll(response.Body)
 
-	rq := epicgamesRequest{}
+	rq := epicgamesResponse{}
 	json.Unmarshal(data, &rq)
 
 	for _, v := range rq.Data.Catalog.SearchStore.Elements {
-
-		// Check is free
-		if v.Price.TotalPrice.OriginalPrice == v.Price.TotalPrice.Discount || v.Price.TotalPrice.OriginalPrice == 0 {
+		if u.IsFree(v.Price) {
 
 			var photo string
 
@@ -56,12 +55,15 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 			}
 
 			game := freegames.Game{
-				Name:      v.Title,
-				Photo:     photo,
-				Platform:  u.GetName(),
-				URL:       fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
+				Name:             v.Title,
+				Photo:            photo,
+				Platform:         u.GetName(),
+				URL:              fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
+				Slug:             v.ProductURL,
+				OfferID:          v.ID,
+				ProductNamespace: v.Namespace,
+				CreatedAt:        time.Now(),
+				UpdatedAt:        time.Now(),
 			}
 
 			games = append(games, game)
@@ -73,11 +75,34 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 }
 
 // IsFree check if a game is currently free or not
-func (u *epicGames) IsFree(game freegames.Game) bool {
-	//TODO: Create request to check if currently is free game
-	return true
+func (u *epicGames) IsFreeGame(game freegames.Game) bool {
+
+	jsonData := createQueryGame(game.OfferID, game.ProductNamespace)
+	request, err := createRequest(jsonData)
+	if err != nil {
+		return true
+	}
+
+	client := &http.Client{Timeout: time.Second * 10}
+	response, err := client.Do(request)
+	if err != nil {
+		return true
+	}
+	defer response.Body.Close()
+	data, _ := ioutil.ReadAll(response.Body)
+
+	rq := epicgamesGameResponse{}
+	json.Unmarshal(data, &rq)
+
+	return u.IsFree(rq.Data.Catalog.CatalogOffer.Price)
 }
 
+// IsFree It's business logic exclusive to the epic games platform that checks whether a game is free
+func (u *epicGames) IsFree(price price) bool {
+	return price.TotalPrice.OriginalPrice == price.TotalPrice.Discount || price.TotalPrice.OriginalPrice == 0
+}
+
+// GetName Get platform name
 func (u *epicGames) GetName() string {
 	return "EpicGames"
 }

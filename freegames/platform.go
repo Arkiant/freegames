@@ -3,6 +3,6 @@ package freegames
 //Platform interface to implement
 type Platform interface {
 	Run() ([]Game, error)
-	IsFree(Game) bool
+	IsFreeGame(Game) bool
 	GetName() string
 }
