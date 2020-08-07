@@ -7,7 +7,7 @@ import (
 
 const (
 	// OnceADay interval
-	OnceADay time.Duration = time.Second * 24
+	OnceADay time.Duration = time.Hour * 24
 )
 
 // Freegames is a struct to abstract app execution
@@ -36,13 +36,13 @@ func (f *Freegames) Run() {
 	defer ticker.Stop()
 
 	do := func() {
-		for _, platform := range f.pool {
-			og := deleteOldFreeGames(platform, *f.db)
-			log.Printf("Deleted %v old free games from platform: %s", len(og), platform.GetName())
-		}
-
 		fg := getAllFreeGames(f.pool, *f.db)
 		log.Printf("Found %v new free games", len(fg))
+
+		for _, platform := range f.pool {
+			og := deleteOldFreeGames(fg, platform, *f.db)
+			log.Printf("Deleted %v old free games from platform: %s", len(og), platform.GetName())
+		}
 	}
 
 	// Execute functionality at runtime first time
@@ -76,7 +76,7 @@ func getAllFreeGames(pool []Platform, db Repository) []Game {
 }
 
 // deleteAllFreeGames from the database
-func deleteOldFreeGames(platform Platform, db Repository) []Game {
+func deleteOldFreeGames(currentFreeGames []Game, platform Platform, db Repository) []Game {
 	freeGames := make([]Game, 0)
 	allGames, err := db.GetGames()
 	if err != nil {
@@ -84,12 +84,21 @@ func deleteOldFreeGames(platform Platform, db Repository) []Game {
 	}
 
 	for _, game := range allGames {
-		if !platform.IsFree(game) {
-			err := db.Delete(game)
-			if err != nil {
-				return freeGames
+		deleted := false
+		for _, currentGame := range currentFreeGames {
+			if currentGame.Name == game.Name {
+				deleted = true
 			}
-			freeGames = append(freeGames, game)
+		}
+
+		if !deleted {
+			if !platform.IsFree(game) {
+				err := db.Delete(game)
+				if err != nil {
+					return freeGames
+				}
+				freeGames = append(freeGames, game)
+			}
 		}
 	}
 

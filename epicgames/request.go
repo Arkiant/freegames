@@ -13,11 +13,11 @@ type epicgamesRequest struct {
 			SearchStore struct {
 				Elements []struct {
 					Title string `json:"title"`
-					Price []struct {
-						TotalPrice []struct {
-							OriginalPrice string `json:"originalPrice"`
-							DiscountPrice string `json:"discountPrice"`
-							Discount      string `json:"discount"`
+					Price struct {
+						TotalPrice struct {
+							OriginalPrice float64 `json:"originalPrice"`
+							DiscountPrice float64 `json:"discountPrice"`
+							Discount      float64 `json:"discount"`
 						} `json:"totalPrice"`
 					} `json:"price"`
 					KeyImages []struct {

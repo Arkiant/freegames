@@ -49,7 +49,27 @@ func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (freegames.R
 
 // GetGames get all current free games
 func (r *mongoRepository) GetGames() ([]freegames.Game, error) {
-	panic("Not implemented")
+	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+	defer cancel()
+
+	fg := make([]freegames.Game, 0)
+
+	collection := r.client.Database(r.database).Collection(r.collection)
+	cur, err := collection.Find(ctx, bson.D{})
+	if err != nil {
+		return fg, err
+	}
+	defer cur.Close(ctx)
+	for cur.Next(ctx) {
+		game := freegames.Game{}
+		err := cur.Decode(&game)
+		if err != nil {
+			return fg, err
+		}
+		fg = append(fg, game)
+	}
+
+	return fg, nil
 }
 
 // Exists check if a game exists in database
@@ -86,5 +106,13 @@ func (r *mongoRepository) Store(game freegames.Game) error {
 
 // Delete a old free game from the database
 func (r *mongoRepository) Delete(game freegames.Game) error {
-	panic("Not implemented")
+	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
+	defer cancel()
+	collection := r.client.Database(r.database).Collection(r.collection)
+
+	_, err := collection.DeleteOne(ctx, bson.D{{"name", game.Name}})
+	if err != nil {
+		return err
+	}
+	return nil
 }

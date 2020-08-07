@@ -44,24 +44,28 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 
 	for _, v := range rq.Data.Catalog.SearchStore.Elements {
 
-		var photo string
+		// Check is free
+		if v.Price.TotalPrice.OriginalPrice == v.Price.TotalPrice.Discount || v.Price.TotalPrice.OriginalPrice == 0 {
 
-		for _, p := range v.KeyImages {
-			if p.Type == "Thumbnail" {
-				photo = p.URL
+			var photo string
+
+			for _, p := range v.KeyImages {
+				if p.Type == "Thumbnail" {
+					photo = p.URL
+				}
 			}
-		}
 
-		game := freegames.Game{
-			Name:      v.Title,
-			Photo:     photo,
-			Platform:  "EpicGames",
-			URL:       fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		}
+			game := freegames.Game{
+				Name:      v.Title,
+				Photo:     photo,
+				Platform:  "EpicGames",
+				URL:       fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
+				CreatedAt: time.Now(),
+				UpdatedAt: time.Now(),
+			}
 
-		games = append(games, game)
+			games = append(games, game)
+		}
 	}
 
 	return games, nil
@@ -71,7 +75,7 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 // IsFree check if a game is currently free or not
 func (u *epicGames) IsFree(game freegames.Game) bool {
 
-	return false
+	return true
 }
 
 func (u *epicGames) GetName() string {
