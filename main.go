@@ -2,7 +2,10 @@ package main
 
 import (
 	"os"
+	"os/signal"
+	"syscall"
 
+	"github.com/arkiant/freegames/discord"
 	"github.com/arkiant/freegames/epicgames"
 	"github.com/arkiant/freegames/freegames"
 	"github.com/arkiant/freegames/mongo"
@@ -33,7 +36,19 @@ func main() {
 		panic(err)
 	}
 
-	fg := freegames.NewFreeGames(&db)
-	fg.AddPlatform(epicgames.NewEpicGames()).Run()
+	// TODO: ADD CLIENT FROM CONFIG FILE
+	// TODO: BOT CONFIGURATION FROM CONFIG FILE
+	discordBot := discord.NewDiscordClient(&db).Configure("token")
 
+	// EXECUTE SERVICE
+	fg := freegames.NewFreeGames(&db)
+	fg.AddPlatform(epicgames.NewEpicGames())
+	fg.AddClient(discordBot)
+	fg.Run()
+
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
+	<-sc
+
+	fg.Close()
 }
