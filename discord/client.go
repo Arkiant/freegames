@@ -3,6 +3,7 @@ package discord
 import (
 	"errors"
 	"fmt"
+	"regexp"
 
 	"github.com/arkiant/freegames/freegames"
 	"github.com/bwmarrin/discordgo"
@@ -82,6 +83,17 @@ func (c *Client) SendMessage() error {
 		}
 	}
 	return nil
+}
+
+// ExecuteCommand execute a specific command
+func (c *Client) ExecuteCommand(command string, clientCommands freegames.ClientCommand) error {
+
+	reg, err := regexp.Compile(`^(?<command>!\w+) (?<text>\S+)|^(?<command>!\w+)`)
+	if err != nil {
+		return err
+	}
+
+	panic("not implemented")
 }
 
 // sendMessageToChannel

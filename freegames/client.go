@@ -8,6 +8,14 @@ type Client interface {
 	GetName() string
 	Close()
 	SendMessage() error
+	ExecuteCommand(command string, clientCommands ClientCommand) error
+}
+
+// ClientCommand abstraction
+type ClientCommand interface {
+	FreeGames()
+	Test()
+	Channel(channel string)
 }
 
 // AddClient using chain patter we can add multiple clients to notify
