@@ -3,7 +3,6 @@ package discord
 import (
 	"errors"
 	"fmt"
-	"regexp"
 
 	"github.com/arkiant/freegames/freegames"
 	"github.com/bwmarrin/discordgo"
@@ -42,14 +41,19 @@ func (c *Client) Execute() error {
 
 	var err error
 
+	// 1- AUTHENTICATION
 	c.dg, err = discordgo.New("Bot " + c.token)
 	if err != nil {
 		return err
 	}
 
-	c.dg.AddHandler(c.freeGamesCommand)
+	// 2- CONFIGURATION
+
+	// 3- HANDLER COMMANDS
+	c.dg.AddHandler(c.handlerCommands)
 	c.dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages)
 
+	// 4- BOT CONNECTIOn
 	err = c.dg.Open()
 	if err != nil {
 		return err
@@ -85,17 +89,6 @@ func (c *Client) SendMessage() error {
 	return nil
 }
 
-// ExecuteCommand execute a specific command
-func (c *Client) ExecuteCommand(command string, clientCommands freegames.ClientCommand) error {
-
-	reg, err := regexp.Compile(`^(?<command>!\w+) (?<text>\S+)|^(?<command>!\w+)`)
-	if err != nil {
-		return err
-	}
-
-	panic("not implemented")
-}
-
 // sendMessageToChannel
 func (c *Client) sendMessageToChannel(channelID string) error {
 	database := *c.db
@@ -111,8 +104,8 @@ func (c *Client) sendMessageToChannel(channelID string) error {
 	return nil
 }
 
-// freeGamesCommand execute freegames command
-func (c *Client) freeGamesCommand(s *discordgo.Session, m *discordgo.MessageCreate) {
+// handlerCommands execute freegames command
+func (c *Client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
