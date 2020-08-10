@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -16,19 +17,23 @@ func main() {
 
 	// ENVIRONMENT VARIABLES
 	const (
-		dataBaseURL = "DATABASE_URL"
+		dataBaseURL  = "DATABASE_URL"
+		discordToken = "DISCORD_TOKEN"
 	)
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Println("Can't load .env file")
+	}
 
 	dbURL := os.Getenv(dataBaseURL)
 	if dbURL == "" {
-		if godotenv.Load(".env") != nil {
-			panic("Can't load .env file")
-		}
+		dbURL = "mongodb://localhost:27017"
+	}
 
-		dbURL = os.Getenv(dataBaseURL)
-		if dbURL == "" {
-			dbURL = "mongodb://localhost:27017"
-		}
+	dToken := os.Getenv(discordToken)
+	if dToken == "" {
+		dbURL = "token"
 	}
 
 	db, err := mongo.NewMongoRepository(dbURL, "freegames", 5)
@@ -36,9 +41,16 @@ func main() {
 		panic(err)
 	}
 
+	// REGISTER CLIENT COMMANDS
+	discordCommandHandler := freegames.NewCommandHandler()
+	err = discordCommandHandler.Register("!freegames", discord.NewFreeGamesCommand())
+	if err != nil {
+		panic(err)
+	}
+
 	// TODO: ADD CLIENT FROM CONFIG FILE
 	// TODO: BOT CONFIGURATION FROM CONFIG FILE
-	discordBot := discord.NewDiscordClient(&db).Configure("token")
+	discordBot := discord.NewDiscordClient(&db, discordCommandHandler).Configure(dToken)
 
 	// EXECUTE SERVICE
 	fg := freegames.NewFreeGames(&db)

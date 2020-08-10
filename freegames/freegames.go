@@ -19,8 +19,14 @@ type Freegames struct {
 
 // NewFreeGames is a constructor to initialize FreeGames object
 func NewFreeGames(db *Repository) *Freegames {
+
+	platforms := make([]Platform, 0)
+	clients := make([]Client, 0)
+
 	return &Freegames{
-		db: db,
+		db:        db,
+		platforms: platforms,
+		clients:   clients,
 	}
 }
 
@@ -45,17 +51,15 @@ func executeService(f *Freegames) {
 	defer ticker.Stop()
 
 	do := func() {
+		// Get all free games
 		fg := getAllFreeGames(f.platforms, *f.db)
 		log.Printf("Found %v new free games", len(fg))
 
-		for _, platform := range f.platforms {
-			og := deleteOldFreeGames(fg, platform, *f.db)
-			log.Printf("Deleted %v old free games from platform: %s", len(og), platform.GetName())
-		}
+		// Delete all old free games
+		deleteAllOldFreeGames(f.platforms, fg, *f.db)
 
-		if len(fg) > 0 {
-			sendGamesToClientsConnected(f)
-		}
+		// Send new games to clients connected
+		sendNewGamesToClientsConnected(fg, f)
 	}
 
 	// Execute functionality at runtime first time
@@ -66,10 +70,18 @@ func executeService(f *Freegames) {
 	}
 }
 
-func sendGamesToClientsConnected(f *Freegames) {
+// sendNewGamesToClientsConnected send new games to all clients connected
+func sendNewGamesToClientsConnected(fg []Game, f *Freegames) {
+	if len(fg) > 0 {
+		sendMessageToClientsConnected(f)
+	}
+}
+
+// sendMessageToClientsConnected send message to client connected
+func sendMessageToClientsConnected(f *Freegames) {
 	for _, v := range f.clients {
 		log.Printf("Sending Message to: %s\n", v.GetName())
-		err := v.SendMessage()
+		err := v.SendFreeGames()
 		if err != nil {
 			log.Printf("Some error ocurried: %s", err.Error())
 		}

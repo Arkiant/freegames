@@ -1,13 +1,16 @@
 package freegames
 
-import "log"
+import (
+	"log"
+)
 
 // Client abstraction
 type Client interface {
 	Execute() error
 	GetName() string
 	Close()
-	SendMessage() error
+	SendFreeGames() error
+	SendFreeGamesToChannel(string) error
 }
 
 // AddClient using chain patter we can add multiple clients to notify
