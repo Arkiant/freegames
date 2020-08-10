@@ -63,7 +63,7 @@ func executeService(f *Freegames) {
 	}
 
 	// Execute functionality at runtime first time
-	do()
+	// do()
 	for range ticker.C {
 		// Execute functionality ticker time
 		do()

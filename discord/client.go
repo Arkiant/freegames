@@ -1,8 +1,10 @@
 package discord
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/arkiant/freegames/freegames"
 	"github.com/bwmarrin/discordgo"
@@ -10,14 +12,15 @@ import (
 
 // Client structure
 type Client struct {
-	db    *freegames.Repository
-	token string
-	dg    *discordgo.Session
+	db       *freegames.Repository
+	token    string
+	dg       *discordgo.Session
+	commands *freegames.CommandHandler
 }
 
 // NewDiscordClient is a constructor to create a new discord client
-func NewDiscordClient(db *freegames.Repository) *Client {
-	return &Client{db: db}
+func NewDiscordClient(db *freegames.Repository, commands *freegames.CommandHandler) *Client {
+	return &Client{db: db, commands: commands}
 }
 
 // TODO: Create complete discord configuration
@@ -83,14 +86,14 @@ func (c *Client) SendMessage() error {
 
 			fmt.Printf("Connected to channel: %s\n", channel.Name)
 
-			c.sendMessageToChannel(channel.ID)
+			c.SendMessageToChannel(channel.ID)
 		}
 	}
 	return nil
 }
 
-// sendMessageToChannel
-func (c *Client) sendMessageToChannel(channelID string) error {
+// SendMessageToChannel this method send all games into a specific channel
+func (c *Client) SendMessageToChannel(channelID string) error {
 	database := *c.db
 	games, err := database.GetGames()
 	if err != nil {
@@ -110,11 +113,10 @@ func (c *Client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 		return
 	}
 
-	// TODO: USE COMMAND PATTERN
-	if m.Content == "!freegames" {
-		err := c.sendMessageToChannel(m.ChannelID)
-		if err != nil {
-			fmt.Printf("Some error ocurried with command: %s", err.Error())
-		}
+	ctx := context.WithValue(context.Background(), freegames.ChannelID, m.ChannelID)
+
+	err := freegames.ExecuteCommand(ctx, c, c.commands, m.Content)
+	if err != nil {
+		log.Printf("Some error ocurried with command: %s\n", err.Error())
 	}
 }

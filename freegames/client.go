@@ -10,6 +10,7 @@ type Client interface {
 	GetName() string
 	Close()
 	SendMessage() error
+	SendMessageToChannel(string) error
 }
 
 // AddClient using chain patter we can add multiple clients to notify
