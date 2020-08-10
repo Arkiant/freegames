@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/arkiant/freegames/freegames"
 )
@@ -19,8 +20,9 @@ func NewFreeGamesCommand() *FreeGamesCommand {
 
 // Execute method
 func (fgc *FreeGamesCommand) Execute(ctx context.Context, c freegames.Client) error {
+	log.Printf("Executing command freegames from discord\n")
 	if channelID, ok := ctx.Value(freegames.ChannelID).(string); ok {
-		err := c.SendMessageToChannel(channelID)
+		err := c.SendFreeGamesToChannel(channelID)
 		if err != nil {
 			return err
 		}

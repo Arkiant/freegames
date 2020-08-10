@@ -63,7 +63,7 @@ func executeService(f *Freegames) {
 	}
 
 	// Execute functionality at runtime first time
-	// do()
+	do()
 	for range ticker.C {
 		// Execute functionality ticker time
 		do()
@@ -81,7 +81,7 @@ func sendNewGamesToClientsConnected(fg []Game, f *Freegames) {
 func sendMessageToClientsConnected(f *Freegames) {
 	for _, v := range f.clients {
 		log.Printf("Sending Message to: %s\n", v.GetName())
-		err := v.SendMessage()
+		err := v.SendFreeGames()
 		if err != nil {
 			log.Printf("Some error ocurried: %s", err.Error())
 		}

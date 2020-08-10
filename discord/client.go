@@ -70,8 +70,8 @@ func (c *Client) Close() {
 	c.dg.Close()
 }
 
-// SendMessage send message to discord client
-func (c *Client) SendMessage() error {
+// SendFreeGames send all free games to discord client
+func (c *Client) SendFreeGames() error {
 	fmt.Println("Sending message...")
 	for _, guild := range c.dg.State.Guilds {
 		channels, _ := c.dg.GuildChannels(guild.ID)
@@ -86,14 +86,14 @@ func (c *Client) SendMessage() error {
 
 			fmt.Printf("Connected to channel: %s\n", channel.Name)
 
-			c.SendMessageToChannel(channel.ID)
+			c.SendFreeGamesToChannel(channel.ID)
 		}
 	}
 	return nil
 }
 
-// SendMessageToChannel this method send all games into a specific channel
-func (c *Client) SendMessageToChannel(channelID string) error {
+// SendFreeGamesToChannel this method send all games into a specific channel
+func (c *Client) SendFreeGamesToChannel(channelID string) error {
 	database := *c.db
 	games, err := database.GetGames()
 	if err != nil {
@@ -114,6 +114,8 @@ func (c *Client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 	}
 
 	ctx := context.WithValue(context.Background(), freegames.ChannelID, m.ChannelID)
+
+	log.Printf("Command %s received from %s", m.Content, m.ChannelID)
 
 	err := freegames.ExecuteCommand(ctx, c, c.commands, m.Content)
 	if err != nil {
