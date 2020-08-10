@@ -1,5 +1,7 @@
 package freegames
 
+import "log"
+
 //Platform interface to implement
 type Platform interface {
 	Run() ([]Game, error)
@@ -33,6 +35,16 @@ func getAllFreeGames(pool []Platform, db Repository) []Game {
 	}
 
 	return freeGames
+}
+
+// deleteAllOldFreeGames from the database
+func deleteAllOldFreeGames(platforms []Platform, currentFreegames []Game, db Repository) {
+
+	for _, platform := range platforms {
+		og := deleteOldFreeGames(currentFreegames, platform, db)
+		log.Printf("Deleted %v old free games from platform: %s", len(og), platform.GetName())
+	}
+
 }
 
 // deleteAllFreeGames from the database
