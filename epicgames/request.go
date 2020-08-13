@@ -1,30 +1,29 @@
 package epicgames
 
 import (
-	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 )
 
-func createRequest(data []byte) (*http.Request, error) {
-	request, err := http.NewRequest("POST", graphqlURL, bytes.NewBuffer(data))
+func createRequest(method string, url string, data io.Reader) (*http.Request, error) {
+	request, err := http.NewRequest(method, url, data)
 	if err != nil {
 		return nil, err
 	}
 
-	request.Header.Set("Content-Type", "application/json")
+	if data != nil {
+		request.Header.Set("Content-Type", "application/json")
+	}
 	request.Header.Set("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0")
 	request.Header.Set("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3")
 	request.Header.Set("Cache-Control", "max-age=0")
-	request.Header.Set("Connection", "keep-alive")
-	request.Header.Set("Host", "www.epicgames.com")
-	request.Header.Set("Origin", "https://www.epicgames.com")
-	request.Header.Set("Referer", "https://www.epicgames.com/store/es-ES/browse?sortBy=releaseDate&sortDir=DESC&pageSize=30")
 	request.Header.Set("X-Requested-With", "XMLHttpRequest")
 	request.Header.Set("TE", "Trailers")
 
 	return request, nil
+
 }
 
 func createQueryFreeGames() []byte {
