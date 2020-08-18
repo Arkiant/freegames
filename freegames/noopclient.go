@@ -25,3 +25,13 @@ func (cc *NoOpClient) Close() {}
 func (cc *NoOpClient) SendMessage() error {
 	return nil
 }
+
+// SendFreeGames functionality
+func (cc *NoOpClient) SendFreeGames() error {
+	return nil
+}
+
+// SendFreeGamesToChannel functionality
+func (cc *NoOpClient) SendFreeGamesToChannel(channel string) error {
+	return nil
+}
