@@ -39,3 +39,13 @@ func TestAddPlatform(t *testing.T) {
 		})
 	}
 }
+
+func TestGetAllFreeGames(t *testing.T) {
+
+	pool := []Platform{NewNoOpPlatform()}
+	db, err := NewNoOpRepository()
+	assert.NoError(t, err)
+	games := getAllFreeGames(pool, db)
+	assert.Len(t, games, 0)
+
+}
