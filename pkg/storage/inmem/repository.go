@@ -8,7 +8,7 @@ type Repository struct {
 }
 
 // NewRepository create a new test repository
-func NewRepository() (*Repository, error) {
+func NewRepository() (freegames.Repository, error) {
 	repo := Repository{
 		database: make([]freegames.Game, 10),
 	}
