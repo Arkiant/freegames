@@ -49,6 +49,6 @@ func TestGetAllFreeGames(t *testing.T) {
 	db, err := inmemRepository.NewRepository()
 	assert.NoError(t, err)
 	games := getAllFreeGames(pool, db)
-	assert.Len(t, games, 0)
+	assert.Len(t, games, 2)
 
 }
