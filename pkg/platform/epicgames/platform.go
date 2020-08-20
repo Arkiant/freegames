@@ -16,15 +16,16 @@ const graphqlURL = "https://www.epicgames.com/store/backend/graphql-proxy"
 const gameInfoURL = "https://store-content.ak.epicgames.com/api/es-ES/content/products/%s"
 const gameFreeGames = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=es-ES&country=ES&allowCountries=ES"
 
-type epicGames struct{}
+// EpicGames platform integration
+type EpicGames struct{}
 
 // NewEpicGames create a new epicgames instance (constructor)
-func NewEpicGames() *epicGames {
-	return new(epicGames)
+func NewEpicGames() *EpicGames {
+	return new(EpicGames)
 }
 
 //Run fetch free games from epicgames store
-func (u *epicGames) Run() ([]freegames.Game, error) {
+func (u *EpicGames) Run() ([]freegames.Game, error) {
 
 	games := make([]freegames.Game, 0, 4)
 
@@ -77,8 +78,8 @@ func (u *epicGames) Run() ([]freegames.Game, error) {
 
 }
 
-// IsFree check if a game is currently free or not
-func (u *epicGames) IsFreeGame(game freegames.Game) bool {
+// IsFreeGame check if a game is currently free or not
+func (u *EpicGames) IsFreeGame(game freegames.Game) bool {
 
 	response, err := http.Get(gameFreeGames)
 	if err != nil {
@@ -104,11 +105,11 @@ func (u *epicGames) IsFreeGame(game freegames.Game) bool {
 }
 
 // IsFree It's business logic exclusive to the epic games platform that checks whether a game is free
-func (u *epicGames) IsFree(price price) bool {
+func (u *EpicGames) IsFree(price price) bool {
 	return price.TotalPrice.OriginalPrice == price.TotalPrice.Discount || price.TotalPrice.OriginalPrice == 0
 }
 
 // GetName Get platform name
-func (u *epicGames) GetName() string {
+func (u *EpicGames) GetName() string {
 	return "EpicGames"
 }
