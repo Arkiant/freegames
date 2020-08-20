@@ -1,8 +1,10 @@
-package freegames
+package service
 
 import (
 	"log"
 	"time"
+
+	freegames "github.com/arkiant/freegames/pkg"
 )
 
 const (
@@ -12,16 +14,16 @@ const (
 
 // Freegames is a struct to abstract app execution
 type Freegames struct {
-	db        *Repository
-	platforms []Platform
-	clients   []Client
+	db        freegames.Repository
+	platforms []freegames.Platform
+	clients   []freegames.Client
 }
 
 // NewFreeGames is a constructor to initialize FreeGames object
-func NewFreeGames(db *Repository) *Freegames {
+func NewFreeGames(db freegames.Repository) *Freegames {
 
-	platforms := make([]Platform, 0)
-	clients := make([]Client, 0)
+	platforms := make([]freegames.Platform, 0)
+	clients := make([]freegames.Client, 0)
 
 	return &Freegames{
 		db:        db,
@@ -52,11 +54,11 @@ func executeService(f *Freegames) {
 
 	do := func() {
 		// Get all free games
-		fg := getAllFreeGames(f.platforms, *f.db)
+		fg := getAllFreeGames(f.platforms, f.db)
 		log.Printf("Found %v new free games", len(fg))
 
 		// Delete all old free games
-		deleteAllOldFreeGames(f.platforms, fg, *f.db)
+		deleteAllOldFreeGames(f.platforms, fg, f.db)
 
 		// Send new games to clients connected
 		sendNewGamesToClientsConnected(fg, f)
@@ -71,7 +73,7 @@ func executeService(f *Freegames) {
 }
 
 // sendNewGamesToClientsConnected send new games to all clients connected
-func sendNewGamesToClientsConnected(fg []Game, f *Freegames) {
+func sendNewGamesToClientsConnected(fg []freegames.Game, f *Freegames) {
 	if len(fg) > 0 {
 		sendMessageToClientsConnected(f)
 	}

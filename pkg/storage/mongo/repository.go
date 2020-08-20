@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/arkiant/freegames/freegames"
+	freegames "github.com/arkiant/freegames/pkg"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

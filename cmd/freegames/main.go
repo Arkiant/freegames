@@ -6,10 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/arkiant/freegames/discord"
-	"github.com/arkiant/freegames/epicgames"
-	"github.com/arkiant/freegames/freegames"
-	"github.com/arkiant/freegames/mongo"
+	freegames "github.com/arkiant/freegames/pkg"
+	"github.com/arkiant/freegames/pkg/client/discord"
+	"github.com/arkiant/freegames/pkg/platform/epicgames"
+	"github.com/arkiant/freegames/pkg/service"
+	"github.com/arkiant/freegames/pkg/storage/mongo"
 	"github.com/joho/godotenv"
 )
 
@@ -53,7 +54,7 @@ func main() {
 	discordBot := discord.NewDiscordClient(&db, discordCommandHandler).Configure(dToken)
 
 	// EXECUTE SERVICE
-	fg := freegames.NewFreeGames(&db)
+	fg := service.NewFreeGames(db)
 	fg.AddPlatform(epicgames.NewEpicGames())
 	fg.AddClient(discordBot)
 	fg.Run()
