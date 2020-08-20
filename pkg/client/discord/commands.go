@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 
-	"github.com/arkiant/freegames/freegames"
+	freegames "github.com/arkiant/freegames/pkg"
 )
 
 // DISCORD COMMANDS IMPLEMENTATION

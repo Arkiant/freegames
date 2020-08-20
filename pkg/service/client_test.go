@@ -1,25 +1,28 @@
-package freegames
+package service
 
 import (
 	"testing"
 
+	freegames "github.com/arkiant/freegames/pkg"
+	inmemClient "github.com/arkiant/freegames/pkg/client/inmem"
+	inmemRepository "github.com/arkiant/freegames/pkg/storage/inmem"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAddClient(t *testing.T) {
 	tests := []struct {
 		Name   string
-		Input  []Client
+		Input  []freegames.Client
 		Output int
 	}{
 		{
 			Name:   "Add a single client",
-			Input:  []Client{NewNoOpClient()},
+			Input:  []freegames.Client{inmemClient.NewClient()},
 			Output: 1,
 		},
 		{
 			Name:   "Add three clients",
-			Input:  []Client{NewNoOpClient(), NewNoOpClient(), NewNoOpClient()},
+			Input:  []freegames.Client{inmemClient.NewClient(), inmemClient.NewClient(), inmemClient.NewClient()},
 			Output: 3,
 		},
 	}
@@ -27,10 +30,10 @@ func TestAddClient(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 
-			db, err := NewNoOpRepository()
+			db, err := inmemRepository.NewRepository()
 			assert.NoError(t, err)
 
-			fg := NewFreeGames(&db)
+			fg := NewFreeGames(db)
 			for _, v := range tc.Input {
 				fg.AddClient(v)
 			}

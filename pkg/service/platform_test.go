@@ -1,25 +1,28 @@
-package freegames
+package service
 
 import (
 	"testing"
 
+	freegames "github.com/arkiant/freegames/pkg"
+	inmemPlatform "github.com/arkiant/freegames/pkg/platform/inmem"
+	inmemRepository "github.com/arkiant/freegames/pkg/storage/inmem"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAddPlatform(t *testing.T) {
 	tests := []struct {
 		Name   string
-		Input  []Platform
+		Input  []freegames.Platform
 		Output int
 	}{
 		{
 			Name:   "Add a single platform",
-			Input:  []Platform{NewNoOpPlatform()},
+			Input:  []freegames.Platform{inmemPlatform.NewPlatform()},
 			Output: 1,
 		},
 		{
 			Name:   "Add three platforms",
-			Input:  []Platform{NewNoOpPlatform(), NewNoOpPlatform(), NewNoOpPlatform()},
+			Input:  []freegames.Platform{inmemPlatform.NewPlatform(), inmemPlatform.NewPlatform(), inmemPlatform.NewPlatform()},
 			Output: 3,
 		},
 	}
@@ -27,10 +30,10 @@ func TestAddPlatform(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 
-			db, err := NewNoOpRepository()
+			db, err := inmemRepository.NewRepository()
 			assert.NoError(t, err)
 
-			fg := NewFreeGames(&db)
+			fg := NewFreeGames(db)
 			for _, v := range tc.Input {
 				fg.AddPlatform(v)
 			}
@@ -42,8 +45,8 @@ func TestAddPlatform(t *testing.T) {
 
 func TestGetAllFreeGames(t *testing.T) {
 
-	pool := []Platform{NewNoOpPlatform()}
-	db, err := NewNoOpRepository()
+	pool := []freegames.Platform{inmemPlatform.NewPlatform()}
+	db, err := inmemRepository.NewRepository()
 	assert.NoError(t, err)
 	games := getAllFreeGames(pool, db)
 	assert.Len(t, games, 0)

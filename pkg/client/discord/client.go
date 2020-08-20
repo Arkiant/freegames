@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/arkiant/freegames/freegames"
+	freegames "github.com/arkiant/freegames/pkg"
 	"github.com/bwmarrin/discordgo"
 )
 

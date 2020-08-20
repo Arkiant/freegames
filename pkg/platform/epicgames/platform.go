@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/arkiant/freegames/freegames"
+	freegames "github.com/arkiant/freegames/pkg"
 )
 
 const graphqlURL = "https://www.epicgames.com/store/backend/graphql-proxy"

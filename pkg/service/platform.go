@@ -1,23 +1,20 @@
-package freegames
+package service
 
-import "log"
+import (
+	"log"
 
-//Platform interface to implement
-type Platform interface {
-	Run() ([]Game, error)
-	IsFreeGame(Game) bool
-	GetName() string
-}
+	freegames "github.com/arkiant/freegames/pkg"
+)
 
 // AddPlatform using chain pattern we can add multiple platforms to get free games
-func (f *Freegames) AddPlatform(platform Platform) *Freegames {
+func (f *Freegames) AddPlatform(platform freegames.Platform) *Freegames {
 	f.platforms = append(f.platforms, platform)
 	return f
 }
 
 // getAllFreeGames from all injected platforms
-func getAllFreeGames(pool []Platform, db Repository) []Game {
-	freeGames := make([]Game, 0)
+func getAllFreeGames(pool []freegames.Platform, db freegames.Repository) []freegames.Game {
+	freeGames := make([]freegames.Game, 0)
 	for _, v := range pool {
 
 		games, err := v.Run()
@@ -38,7 +35,7 @@ func getAllFreeGames(pool []Platform, db Repository) []Game {
 }
 
 // deleteAllOldFreeGames from the database
-func deleteAllOldFreeGames(platforms []Platform, currentFreegames []Game, db Repository) {
+func deleteAllOldFreeGames(platforms []freegames.Platform, currentFreegames []freegames.Game, db freegames.Repository) {
 
 	for _, platform := range platforms {
 		og := deleteOldFreeGames(currentFreegames, platform, db)
@@ -48,8 +45,8 @@ func deleteAllOldFreeGames(platforms []Platform, currentFreegames []Game, db Rep
 }
 
 // deleteAllFreeGames from the database
-func deleteOldFreeGames(currentFreeGames []Game, platform Platform, db Repository) []Game {
-	freeGames := make([]Game, 0)
+func deleteOldFreeGames(currentFreeGames []freegames.Game, platform freegames.Platform, db freegames.Repository) []freegames.Game {
+	freeGames := make([]freegames.Game, 0)
 	allGames, err := db.GetGames()
 	if err != nil {
 		return freeGames

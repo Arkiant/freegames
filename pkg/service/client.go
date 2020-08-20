@@ -1,20 +1,13 @@
-package freegames
+package service
 
 import (
 	"log"
+
+	freegames "github.com/arkiant/freegames/pkg"
 )
 
-// Client abstraction
-type Client interface {
-	Execute() error
-	GetName() string
-	Close()
-	SendFreeGames() error
-	SendFreeGamesToChannel(string) error
-}
-
 // AddClient using chain patter we can add multiple clients to notify
-func (f *Freegames) AddClient(client Client) *Freegames {
+func (f *Freegames) AddClient(client freegames.Client) *Freegames {
 	f.clients = append(f.clients, client)
 	return f
 }
