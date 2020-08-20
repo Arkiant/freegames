@@ -15,7 +15,7 @@ func (cc *Client) Execute() error {
 
 // GetName functionality
 func (cc *Client) GetName() string {
-	return "NoOpClient"
+	return "InmemClient"
 }
 
 // Close functionality

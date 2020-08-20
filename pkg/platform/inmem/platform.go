@@ -28,5 +28,5 @@ func (u *Platform) IsFreeGame(game freegames.Game) bool {
 
 // GetName Get platform name
 func (u *Platform) GetName() string {
-	return "NoOpPlatform"
+	return "InmemPlatform"
 }
