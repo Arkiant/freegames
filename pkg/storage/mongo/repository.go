@@ -11,7 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type mongoRepository struct {
+type repository struct {
 	client     *mongo.Client
 	database   string
 	collection string
@@ -34,7 +34,7 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 
 // NewMongoRepository create a new mongo repository
 func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (freegames.Repository, error) {
-	repo := &mongoRepository{
+	repo := &repository{
 		timeout:    time.Duration(mongoTimeout) * time.Second,
 		database:   mongoDB,
 		collection: "currentFreeGames",
@@ -48,7 +48,7 @@ func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (freegames.R
 }
 
 // GetGames get all current free games
-func (r *mongoRepository) GetGames() ([]freegames.Game, error) {
+func (r *repository) GetGames() ([]freegames.Game, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 
@@ -73,7 +73,7 @@ func (r *mongoRepository) GetGames() ([]freegames.Game, error) {
 }
 
 // Exists check if a game exists in database
-func (r *mongoRepository) Exists(game freegames.Game) bool {
+func (r *repository) Exists(game freegames.Game) bool {
 
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
@@ -89,7 +89,7 @@ func (r *mongoRepository) Exists(game freegames.Game) bool {
 }
 
 // Store a free game into the database
-func (r *mongoRepository) Store(game freegames.Game) error {
+func (r *repository) Store(game freegames.Game) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 	collection := r.client.Database(r.database).Collection(r.collection)
@@ -105,7 +105,7 @@ func (r *mongoRepository) Store(game freegames.Game) error {
 }
 
 // Delete a old free game from the database
-func (r *mongoRepository) Delete(game freegames.Game) error {
+func (r *repository) Delete(game freegames.Game) error {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 	collection := r.client.Database(r.database).Collection(r.collection)

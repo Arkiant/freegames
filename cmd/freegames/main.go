@@ -51,7 +51,7 @@ func main() {
 
 	// TODO: ADD CLIENT FROM CONFIG FILE
 	// TODO: BOT CONFIGURATION FROM CONFIG FILE
-	discordBot := discord.NewDiscordClient(&db, discordCommandHandler).Configure(dToken)
+	discordBot := discord.NewDiscordClient(&db, discordCommandHandler, dToken)
 
 	// EXECUTE SERVICE
 	fg := service.NewFreeGames(db)

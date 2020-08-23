@@ -1,37 +1,39 @@
 package inmem
 
-// Client is a not implemented client used by tests
-type Client struct{}
+import freegames "github.com/arkiant/freegames/pkg"
+
+// client is a not implemented client used by tests
+type client struct{}
 
 // NewClient constructor
-func NewClient() *Client {
-	return &Client{}
+func NewClient() freegames.Client {
+	return &client{}
 }
 
 // Execute functionality
-func (cc *Client) Execute() error {
+func (cc *client) Execute() error {
 	return nil
 }
 
 // GetName functionality
-func (cc *Client) GetName() string {
+func (cc *client) GetName() string {
 	return "InmemClient"
 }
 
 // Close functionality
-func (cc *Client) Close() {}
+func (cc *client) Close() {}
 
 // SendMessage functionality
-func (cc *Client) SendMessage() error {
+func (cc *client) SendMessage() error {
 	return nil
 }
 
 // SendFreeGames functionality
-func (cc *Client) SendFreeGames() error {
+func (cc *client) SendFreeGames() error {
 	return nil
 }
 
 // SendFreeGamesToChannel functionality
-func (cc *Client) SendFreeGamesToChannel(channel string) error {
+func (cc *client) SendFreeGamesToChannel(channel string) error {
 	return nil
 }

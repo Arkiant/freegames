@@ -6,16 +6,16 @@ import (
 	freegames "github.com/arkiant/freegames/pkg"
 )
 
-// Platform is a not implemented platform used by tests
-type Platform struct{}
+// platform is a not implemented platform used by tests
+type platform struct{}
 
 // NewPlatform create a new epicgames instance (constructor)
-func NewPlatform() *Platform {
-	return new(Platform)
+func NewPlatform() freegames.Platform {
+	return &platform{}
 }
 
 //Run fetch free games from epicgames store
-func (u *Platform) Run() ([]freegames.Game, error) {
+func (u *platform) Run() ([]freegames.Game, error) {
 
 	games := make([]freegames.Game, 0, 4)
 
@@ -48,7 +48,7 @@ func (u *Platform) Run() ([]freegames.Game, error) {
 }
 
 // IsFreeGame check if a game is currently free or not
-func (u *Platform) IsFreeGame(game freegames.Game) bool {
+func (u *platform) IsFreeGame(game freegames.Game) bool {
 
 	if game.Name == "Test Free Game" {
 		return true
@@ -58,6 +58,6 @@ func (u *Platform) IsFreeGame(game freegames.Game) bool {
 }
 
 // GetName Get platform name
-func (u *Platform) GetName() string {
+func (u *platform) GetName() string {
 	return "InmemPlatform"
 }

@@ -10,16 +10,16 @@ import (
 
 // DISCORD COMMANDS IMPLEMENTATION
 
-// FreeGamesCommand implementation
-type FreeGamesCommand struct{}
+// freeGamesCommand implementation
+type freeGamesCommand struct{}
 
 // NewFreeGamesCommand constructor
-func NewFreeGamesCommand() *FreeGamesCommand {
-	return new(FreeGamesCommand)
+func NewFreeGamesCommand() freegames.Command {
+	return &freeGamesCommand{}
 }
 
 // Execute method
-func (fgc *FreeGamesCommand) Execute(ctx context.Context, c freegames.Client) error {
+func (fgc *freeGamesCommand) Execute(ctx context.Context, c freegames.Client) error {
 	log.Printf("Executing command freegames from discord\n")
 	if channelID, ok := ctx.Value(freegames.ChannelID).(string); ok {
 		err := c.SendFreeGamesToChannel(channelID)

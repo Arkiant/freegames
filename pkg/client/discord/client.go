@@ -10,8 +10,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 )
 
-// Client structure
-type Client struct {
+// client structure
+type client struct {
 	db       *freegames.Repository
 	token    string
 	dg       *discordgo.Session
@@ -19,25 +19,19 @@ type Client struct {
 }
 
 // NewDiscordClient is a constructor to create a new discord client
-func NewDiscordClient(db *freegames.Repository, commands *freegames.CommandHandler) *Client {
-	return &Client{db: db, commands: commands}
+func NewDiscordClient(db *freegames.Repository, commands *freegames.CommandHandler, token string) freegames.Client {
+	return &client{db: db, commands: commands, token: token}
 }
 
 // TODO: Create complete discord configuration
 
-// Configure discord bot
-func (c *Client) Configure(token string) *Client {
-	c.token = token
-	return c
-}
-
 // GetName get bot name
-func (c *Client) GetName() string {
+func (c *client) GetName() string {
 	return "Discord"
 }
 
 // Execute discord bot
-func (c *Client) Execute() error {
+func (c *client) Execute() error {
 	if c.token == "" {
 		return errors.New("Token need to be configured")
 	}
@@ -66,12 +60,12 @@ func (c *Client) Execute() error {
 }
 
 // Close function to close bot
-func (c *Client) Close() {
+func (c *client) Close() {
 	c.dg.Close()
 }
 
 // SendFreeGames send all free games to discord client
-func (c *Client) SendFreeGames() error {
+func (c *client) SendFreeGames() error {
 	fmt.Println("Sending message...")
 	for _, guild := range c.dg.State.Guilds {
 		channels, _ := c.dg.GuildChannels(guild.ID)
@@ -93,7 +87,7 @@ func (c *Client) SendFreeGames() error {
 }
 
 // SendFreeGamesToChannel this method send all games into a specific channel
-func (c *Client) SendFreeGamesToChannel(channelID string) error {
+func (c *client) SendFreeGamesToChannel(channelID string) error {
 	database := *c.db
 	games, err := database.GetGames()
 	if err != nil {
@@ -108,7 +102,7 @@ func (c *Client) SendFreeGamesToChannel(channelID string) error {
 }
 
 // handlerCommands execute freegames command
-func (c *Client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreate) {
+func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
