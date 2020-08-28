@@ -16,14 +16,11 @@ Are the gaming platforms inside the microservice, for example we have epicgames 
 
 Repo is the main storage for this microservice, in this example we will use monodb.
 
-## Client
+### Client
 
-For this example we will try to implement two different clients:
+For this example we will try to implement discord client.
 
-- Telegram
-- Discord
-
-## APP
+### APP
 
 Here is the entire business logic of the non-implementation application.
 
