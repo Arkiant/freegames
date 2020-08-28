@@ -43,13 +43,15 @@ $ docker-compose up
 
 ## Execution without docker-compose
 
-```
-$ docker build -t github.com/arkiant/freegames:latest .
-$ docker run --name freegames github.com/arkiant/freegames:latest
-```
-
-## Mongo database local
+### 1. Mongo database local
 
 ```
 $ docker run --name mongo -p 27017:27017 mongo:latest
+```
+
+### 2. Freegames service
+
+```
+$ docker build -t github.com/arkiant/freegames:latest .
+$ docker run --name freegames github.com/arkiant/freegames:latest
 ```
