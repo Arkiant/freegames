@@ -107,11 +107,18 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 		return
 	}
 
+	command, args, err := freegames.ExtractCommand(m.Content)
+	if err != nil {
+		log.Printf("Some error ocurried while extract command: %s\n", err.Error())
+		return
+	}
+
+	// TODO: add arguments arg[1:] to context
 	ctx := context.WithValue(context.Background(), freegames.ChannelID, m.ChannelID)
 
-	log.Printf("Command %s received from %s", m.Content, m.ChannelID)
+	log.Printf("Command %s received from %s", command, m.ChannelID)
 
-	err := freegames.ExecuteCommand(ctx, c, c.commands, m.Content)
+	err = freegames.ExecuteCommand(ctx, c, c.commands, command, args)
 	if err != nil {
 		log.Printf("Some error ocurried with command: %s\n", err.Error())
 	}

@@ -3,6 +3,7 @@ package freegames
 import (
 	"context"
 	"errors"
+	"strings"
 )
 
 var (
@@ -58,12 +59,36 @@ func (handler CommandHandler) Register(name string, cc Command) error {
 	return ErrCommandExists
 }
 
+// TODO: get prefix from configuration
+const prefix = "!"
+
+// ExtractCommand auxiliar function split string into command, args and any errors ocurried
+func ExtractCommand(content string) (string, []string, error) {
+
+	if len(content) <= len(prefix) {
+		return "", nil, errors.New("wrong command composition")
+	}
+
+	if content[0:len(prefix)] != prefix {
+		return "", nil, errors.New("wrong prefix")
+	}
+
+	c := content[len(prefix):]
+	s := strings.Fields(c)
+	commandName := strings.ToLower(s[0])
+	args := s[1:]
+
+	return commandName, args, nil
+}
+
 // ExecuteCommand with context and name
-func ExecuteCommand(ctx context.Context, c Client, handler *CommandHandler, name string) error {
+func ExecuteCommand(ctx context.Context, c Client, handler *CommandHandler, name string, params []string) error {
 	v, err := handler.Get(name)
 	if err != nil {
 		return err
 	}
+
+	// TODO: params usage
 
 	err = v.Execute(ctx, c)
 	if err != nil {
