@@ -18,8 +18,8 @@ type client struct {
 }
 
 // NewDiscordClient is a constructor to create a new discord client
-func NewDiscordClient(db *freegames.Repository, commands *freegames.CommandHandler, token string) freegames.Client {
-	return &client{db: db, commands: commands, token: token}
+func NewDiscordClient(db *freegames.Repository, token string) freegames.Client {
+	return &client{db: db, token: token}
 }
 
 // TODO: Create complete discord configuration
@@ -123,4 +123,12 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 	if err != nil {
 		log.Printf("Some error ocurried with command: %s\n", err.Error())
 	}
+}
+
+func (c *client) Freegames() freegames.Command {
+	panic("not implemeneted")
+}
+
+func (c *client) JoinChannelCommand() freegames.Command {
+	panic("not implemented")
 }

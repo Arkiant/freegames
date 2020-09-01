@@ -42,16 +42,16 @@ func main() {
 		panic(err)
 	}
 
-	// REGISTER CLIENT COMMANDS
-	discordCommandHandler := freegames.NewCommandHandler()
-	err = discordCommandHandler.Register("!freegames", discord.NewFreeGamesCommand())
-	if err != nil {
-		panic(err)
-	}
-
 	// TODO: ADD CLIENT FROM CONFIG FILE
 	// TODO: BOT CONFIGURATION FROM CONFIG FILE
-	discordBot := discord.NewDiscordClient(&db, discordCommandHandler, dToken)
+
+	// Create discord client
+	discordBot := discord.NewDiscordClient(&db, dToken)
+
+	ch := discordBot.(freegames.ClientCommands)
+
+	// TODO: Better usage about multiple interface
+	freegames.NewCommandHandler(ch)
 
 	// EXECUTE SERVICE
 	fg := service.NewFreeGames(db)

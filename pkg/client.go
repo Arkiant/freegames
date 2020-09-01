@@ -8,3 +8,9 @@ type Client interface {
 	SendFreeGames() error
 	SendFreeGamesToChannel(string) error
 }
+
+// ClientCommands available to implement
+type ClientCommands interface {
+	FreegamesCommand() Command
+	JoinChannelCommand() Command
+}

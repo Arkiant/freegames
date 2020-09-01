@@ -31,31 +31,14 @@ type CommandHandler struct {
 	commands map[string]Command
 }
 
-// NewCommandHandler create a new empty command handler to be used
-func NewCommandHandler() *CommandHandler {
+// NewCommandHandler create a new command handler registering commands availables
+func NewCommandHandler(cc ClientCommands) *CommandHandler {
 	cmd := make(map[string]Command)
+	cmd["freegames"] = cc.FreegamesCommand()
+	cmd["join"] = cc.JoinChannelCommand()
 	return &CommandHandler{
 		commands: cmd,
 	}
-}
-
-// Get a client command registered
-func (handler CommandHandler) Get(name string) (Command, error) {
-	if v, ok := handler.commands[name]; ok {
-		return v, nil
-	}
-
-	return nil, ErrCommandNotFound
-}
-
-// Register a client command to be used
-func (handler CommandHandler) Register(name string, cc Command) error {
-	if _, ok := handler.commands[name]; !ok {
-		handler.commands[name] = cc
-		return nil
-	}
-
-	return ErrCommandExists
 }
 
 // TODO: get prefix from configuration
@@ -82,14 +65,8 @@ func ExtractCommand(content string) (string, []string, error) {
 
 // ExecuteCommand with context and name
 func ExecuteCommand(ctx Context, c Client, handler *CommandHandler, name string, params []string) error {
-	v, err := handler.Get(name)
-	if err != nil {
-		return err
-	}
-
-	// TODO: params usage
-
-	err = v.Execute(ctx, c)
+	command := handler.commands[name]
+	err := command.Execute(ctx, c)
 	if err != nil {
 		return err
 	}
