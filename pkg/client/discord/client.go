@@ -1,7 +1,6 @@
 package discord
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -113,8 +112,10 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 		return
 	}
 
-	// TODO: add arguments arg[1:] to context
-	ctx := context.WithValue(context.Background(), freegames.ChannelID, m.ChannelID)
+	ctx := freegames.Context{
+		Channel: m.ChannelID,
+		Args:    args,
+	}
 
 	log.Printf("Command %s received from %s", command, m.ChannelID)
 

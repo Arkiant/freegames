@@ -1,7 +1,6 @@
 package freegames
 
 import (
-	"context"
 	"errors"
 	"strings"
 )
@@ -24,7 +23,7 @@ const (
 
 // Command abstraction
 type Command interface {
-	Execute(ctx context.Context, c Client) error
+	Execute(ctx Context, c Client) error
 }
 
 // CommandHandler has responsability to handler commands
@@ -82,7 +81,7 @@ func ExtractCommand(content string) (string, []string, error) {
 }
 
 // ExecuteCommand with context and name
-func ExecuteCommand(ctx context.Context, c Client, handler *CommandHandler, name string, params []string) error {
+func ExecuteCommand(ctx Context, c Client, handler *CommandHandler, name string, params []string) error {
 	v, err := handler.Get(name)
 	if err != nil {
 		return err
