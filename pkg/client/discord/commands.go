@@ -44,5 +44,21 @@ func NewJoinChannelCommand() freegames.Command {
 
 // Execute method for join channel command
 func (fjc *joinChannelCommand) Execute(ctx freegames.Context, c freegames.Client) error {
-	panic("not implemented")
+	if len(ctx.Args) <= 0 {
+		return errors.New("channel is mandatory")
+	}
+
+	channel := ctx.Args[0]
+
+	extractedChannel := c.ExtractChannel(channel)
+	if extractedChannel == "" {
+		return errors.New("invalid channel")
+	}
+
+	err := c.JoinChannel(string(extractedChannel))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

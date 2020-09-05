@@ -37,3 +37,13 @@ func (cc *client) SendFreeGames() error {
 func (cc *client) SendFreeGamesToChannel(channel string) error {
 	return nil
 }
+
+// JoinChannel functionality
+func (cc *client) JoinChannel(channel string) error {
+	return nil
+}
+
+// ExtractChannel depends about client
+func (cc *client) ExtractChannel(channel string) string {
+	return ""
+}

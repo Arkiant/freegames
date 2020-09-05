@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
 
 	freegames "github.com/arkiant/freegames/pkg"
 	"github.com/bwmarrin/discordgo"
@@ -14,12 +15,16 @@ type client struct {
 	db       *freegames.Repository
 	token    string
 	dg       *discordgo.Session
+	channel  string
 	commands *freegames.CommandHandler
 }
 
 // NewDiscordClient is a constructor to create a new discord client
 func NewDiscordClient(db *freegames.Repository, token string) freegames.Client {
-	return &client{db: db, token: token}
+	c := &client{db: db, token: token}
+	ch := freegames.NewCommandHandler(c)
+	c.commands = ch
+	return c
 }
 
 // TODO: Create complete discord configuration
@@ -100,6 +105,12 @@ func (c *client) SendFreeGamesToChannel(channelID string) error {
 	return nil
 }
 
+// JoinChannel functionality, this implementation use a channel property to save current channel to answer
+func (c *client) JoinChannel(channelID string) error {
+	c.channel = channelID
+	return nil
+}
+
 // handlerCommands execute freegames command
 func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
@@ -112,8 +123,12 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 		return
 	}
 
+	if c.channel == "" {
+		c.channel = m.ChannelID
+	}
+
 	ctx := freegames.Context{
-		Channel: m.ChannelID,
+		Channel: c.channel,
 		Args:    args,
 	}
 
@@ -125,10 +140,22 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 	}
 }
 
-func (c *client) Freegames() freegames.Command {
-	panic("not implemeneted")
+// FreegamesCommand create a new freegames command concrete to discord client
+func (c *client) FreegamesCommand() freegames.Command {
+	return NewFreeGamesCommand()
 }
 
+// JoinChannelCommand create a new join channel command concrete to discord client
 func (c *client) JoinChannelCommand() freegames.Command {
-	panic("not implemented")
+	return NewJoinChannelCommand()
+}
+
+// ExtractChannel extracts channel number concrete to discord channels
+func (c *client) ExtractChannel(channel string) string {
+	re := regexp.MustCompile(`[0-9]+`)
+	extractedChannel := re.FindAll([]byte(channel), -1)
+	if len(extractedChannel) <= 0 {
+		return ""
+	}
+	return string(extractedChannel[0])
 }

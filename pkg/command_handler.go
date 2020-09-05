@@ -2,6 +2,7 @@ package freegames
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -65,7 +66,10 @@ func ExtractCommand(content string) (string, []string, error) {
 
 // ExecuteCommand with context and name
 func ExecuteCommand(ctx Context, c Client, handler *CommandHandler, name string, params []string) error {
-	command := handler.commands[name]
+	command, ok := handler.commands[name]
+	if !ok {
+		return fmt.Errorf("command not found: %s", name)
+	}
 	err := command.Execute(ctx, c)
 	if err != nil {
 		return err
