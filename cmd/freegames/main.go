@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	freegames "github.com/arkiant/freegames/pkg"
 	"github.com/arkiant/freegames/pkg/client/discord"
 	"github.com/arkiant/freegames/pkg/platform/epicgames"
 	"github.com/arkiant/freegames/pkg/service"
@@ -42,16 +41,11 @@ func main() {
 		panic(err)
 	}
 
-	// REGISTER CLIENT COMMANDS
-	discordCommandHandler := freegames.NewCommandHandler()
-	err = discordCommandHandler.Register("!freegames", discord.NewFreeGamesCommand())
-	if err != nil {
-		panic(err)
-	}
-
 	// TODO: ADD CLIENT FROM CONFIG FILE
 	// TODO: BOT CONFIGURATION FROM CONFIG FILE
-	discordBot := discord.NewDiscordClient(&db, discordCommandHandler, dToken)
+
+	// Create discord client
+	discordBot := discord.NewDiscordClient(&db, dToken)
 
 	// EXECUTE SERVICE
 	fg := service.NewFreeGames(db)

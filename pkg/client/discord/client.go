@@ -1,10 +1,10 @@
 package discord
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
 
 	freegames "github.com/arkiant/freegames/pkg"
 	"github.com/bwmarrin/discordgo"
@@ -15,12 +15,16 @@ type client struct {
 	db       *freegames.Repository
 	token    string
 	dg       *discordgo.Session
+	channel  string
 	commands *freegames.CommandHandler
 }
 
 // NewDiscordClient is a constructor to create a new discord client
-func NewDiscordClient(db *freegames.Repository, commands *freegames.CommandHandler, token string) freegames.Client {
-	return &client{db: db, commands: commands, token: token}
+func NewDiscordClient(db *freegames.Repository, token string) freegames.Client {
+	c := &client{db: db, token: token}
+	ch := freegames.NewCommandHandler(c)
+	c.commands = ch
+	return c
 }
 
 // TODO: Create complete discord configuration
@@ -101,18 +105,57 @@ func (c *client) SendFreeGamesToChannel(channelID string) error {
 	return nil
 }
 
+// JoinChannel functionality, this implementation use a channel property to save current channel to answer
+func (c *client) JoinChannel(channelID string) error {
+	c.channel = channelID
+	return nil
+}
+
 // handlerCommands execute freegames command
 func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
-	ctx := context.WithValue(context.Background(), freegames.ChannelID, m.ChannelID)
+	command, args, err := freegames.ExtractCommand(m.Content)
+	if err != nil {
+		log.Printf("Some error ocurried while extract command: %s\n", err.Error())
+		return
+	}
 
-	log.Printf("Command %s received from %s", m.Content, m.ChannelID)
+	if c.channel == "" {
+		c.channel = m.ChannelID
+	}
 
-	err := freegames.ExecuteCommand(ctx, c, c.commands, m.Content)
+	ctx := freegames.Context{
+		Channel: c.channel,
+		Args:    args,
+	}
+
+	log.Printf("Command %s received from %s", command, m.ChannelID)
+
+	err = freegames.ExecuteCommand(ctx, c, c.commands, command, args)
 	if err != nil {
 		log.Printf("Some error ocurried with command: %s\n", err.Error())
 	}
+}
+
+// FreegamesCommand create a new freegames command concrete to discord client
+func (c *client) FreegamesCommand() freegames.Command {
+	return NewFreeGamesCommand()
+}
+
+// JoinChannelCommand create a new join channel command concrete to discord client
+func (c *client) JoinChannelCommand() freegames.Command {
+	return NewJoinChannelCommand()
+}
+
+// ExtractChannel extracts channel number concrete to discord channels
+func (c *client) ExtractChannel(channel string) string {
+	re := regexp.MustCompile(`[0-9]+`)
+	extractedChannel := re.FindAll([]byte(channel), -1)
+	if len(extractedChannel) <= 0 {
+		return ""
+	}
+	return string(extractedChannel[0])
 }

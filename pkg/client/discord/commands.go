@@ -1,7 +1,6 @@
 package discord
 
 import (
-	"context"
 	"errors"
 	"log"
 
@@ -19,10 +18,11 @@ func NewFreeGamesCommand() freegames.Command {
 }
 
 // Execute method
-func (fgc *freeGamesCommand) Execute(ctx context.Context, c freegames.Client) error {
+func (fgc *freeGamesCommand) Execute(ctx freegames.Context, c freegames.Client) error {
 	log.Printf("Executing command freegames from discord\n")
-	if channelID, ok := ctx.Value(freegames.ChannelID).(string); ok {
-		err := c.SendFreeGamesToChannel(channelID)
+
+	if ctx.Channel != "" {
+		err := c.SendFreeGamesToChannel(ctx.Channel)
 		if err != nil {
 			return err
 		}
@@ -34,3 +34,31 @@ func (fgc *freeGamesCommand) Execute(ctx context.Context, c freegames.Client) er
 
 // TODO: Test
 // TODO: Channel
+
+type joinChannelCommand struct{}
+
+// NewJoinChannelCommand create a new join channel command structure
+func NewJoinChannelCommand() freegames.Command {
+	return &joinChannelCommand{}
+}
+
+// Execute method for join channel command
+func (fjc *joinChannelCommand) Execute(ctx freegames.Context, c freegames.Client) error {
+	if len(ctx.Args) <= 0 {
+		return errors.New("channel is mandatory")
+	}
+
+	channel := ctx.Args[0]
+
+	extractedChannel := c.ExtractChannel(channel)
+	if extractedChannel == "" {
+		return errors.New("invalid channel")
+	}
+
+	err := c.JoinChannel(string(extractedChannel))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

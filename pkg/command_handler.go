@@ -1,8 +1,9 @@
 package freegames
 
 import (
-	"context"
 	"errors"
+	"fmt"
+	"strings"
 )
 
 var (
@@ -23,7 +24,7 @@ const (
 
 // Command abstraction
 type Command interface {
-	Execute(ctx context.Context, c Client) error
+	Execute(ctx Context, c Client) error
 }
 
 // CommandHandler has responsability to handler commands
@@ -31,41 +32,45 @@ type CommandHandler struct {
 	commands map[string]Command
 }
 
-// NewCommandHandler create a new empty command handler to be used
-func NewCommandHandler() *CommandHandler {
+// NewCommandHandler create a new command handler registering commands availables
+func NewCommandHandler(cc ClientCommands) *CommandHandler {
 	cmd := make(map[string]Command)
+	cmd["freegames"] = cc.FreegamesCommand()
+	cmd["join"] = cc.JoinChannelCommand()
 	return &CommandHandler{
 		commands: cmd,
 	}
 }
 
-// Get a client command registered
-func (handler CommandHandler) Get(name string) (Command, error) {
-	if v, ok := handler.commands[name]; ok {
-		return v, nil
+// TODO: get prefix from configuration
+const prefix = "!"
+
+// ExtractCommand auxiliar function split string into command, args and any errors ocurried
+func ExtractCommand(content string) (string, []string, error) {
+
+	if len(content) <= len(prefix) {
+		return "", nil, errors.New("wrong command composition")
 	}
 
-	return nil, ErrCommandNotFound
-}
-
-// Register a client command to be used
-func (handler CommandHandler) Register(name string, cc Command) error {
-	if _, ok := handler.commands[name]; !ok {
-		handler.commands[name] = cc
-		return nil
+	if content[0:len(prefix)] != prefix {
+		return "", nil, errors.New("wrong prefix")
 	}
 
-	return ErrCommandExists
+	c := content[len(prefix):]
+	s := strings.Fields(c)
+	commandName := strings.ToLower(s[0])
+	args := s[1:]
+
+	return commandName, args, nil
 }
 
 // ExecuteCommand with context and name
-func ExecuteCommand(ctx context.Context, c Client, handler *CommandHandler, name string) error {
-	v, err := handler.Get(name)
-	if err != nil {
-		return err
+func ExecuteCommand(ctx Context, c Client, handler *CommandHandler, name string, params []string) error {
+	command, ok := handler.commands[name]
+	if !ok {
+		return fmt.Errorf("command not found: %s", name)
 	}
-
-	err = v.Execute(ctx, c)
+	err := command.Execute(ctx, c)
 	if err != nil {
 		return err
 	}
