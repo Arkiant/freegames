@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"path/filepath"
+	"runtime"
 	"syscall"
 
 	"github.com/arkiant/freegames/pkg/client/discord"
@@ -21,9 +23,15 @@ func main() {
 		discordToken = "DISCORD_TOKEN"
 	)
 
-	err := godotenv.Load(".env")
+	var (
+		_, base, _, _   = runtime.Caller(0)
+		basePath        = filepath.Dir(base)
+		environmentPath = filepath.Join(basePath, "../../", ".env")
+	)
+
+	err := godotenv.Load(environmentPath)
 	if err != nil {
-		log.Println("Can't load .env file")
+		log.Printf("Can't load .env file error: %s", err.Error())
 	}
 
 	dbURL := os.Getenv(dataBaseURL)
