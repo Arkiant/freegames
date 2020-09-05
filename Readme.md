@@ -46,3 +46,9 @@ $ docker run --name mongo -p 27017:27017 mongo:latest
 $ docker build -t github.com/arkiant/freegames:latest .
 $ docker run --name freegames github.com/arkiant/freegames:latest
 ```
+
+### Command to update and rebuild only a single service in docker-compose
+
+```
+$ docker-compose up -d --no-deps --build <servicename>
+```
