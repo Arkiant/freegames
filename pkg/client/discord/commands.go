@@ -33,7 +33,6 @@ func (fgc *freeGamesCommand) Execute(ctx freegames.Context, c freegames.Client) 
 }
 
 // TODO: Test
-// TODO: Channel
 
 type joinChannelCommand struct{}
 
