@@ -24,12 +24,7 @@ func NewViperConfiguration(file string) (freegames.Config, error) {
 	return &viperConfiguration{Configuration: configuration}, nil
 }
 
-func (vc *viperConfiguration) ClientConfig() ([]struct {
-	Discord struct {
-		Enable  bool
-		Channel string
-	}
-}, error) {
+func (vc *viperConfiguration) ClientConfig() (freegames.ClientsConfiguration, error) {
 	if len(vc.Configuration.Clients) <= 0 {
 		return nil, errors.New("No clients specified")
 	}
