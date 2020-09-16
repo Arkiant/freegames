@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	freegames "github.com/arkiant/freegames/pkg"
+	inmemConfiguration "github.com/arkiant/freegames/pkg/config/inmem"
 	inmemPlatform "github.com/arkiant/freegames/pkg/platform/inmem"
 	inmemRepository "github.com/arkiant/freegames/pkg/storage/inmem"
 	"github.com/stretchr/testify/assert"
@@ -33,7 +34,8 @@ func TestAddPlatform(t *testing.T) {
 			db, err := inmemRepository.NewRepository()
 			assert.NoError(t, err)
 
-			fg := NewFreeGames(db)
+			conf, err := inmemConfiguration.NewInmemConfiguration()
+			fg := NewFreeGames(db, conf)
 			for _, v := range tc.Input {
 				fg.AddPlatform(v)
 			}

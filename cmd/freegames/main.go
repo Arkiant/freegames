@@ -9,6 +9,7 @@ import (
 	"syscall"
 
 	"github.com/arkiant/freegames/pkg/client/discord"
+	"github.com/arkiant/freegames/pkg/config/viper"
 	"github.com/arkiant/freegames/pkg/platform/epicgames"
 	"github.com/arkiant/freegames/pkg/service"
 	"github.com/arkiant/freegames/pkg/storage/mongo"
@@ -24,9 +25,10 @@ func main() {
 	)
 
 	var (
-		_, base, _, _   = runtime.Caller(0)
-		basePath        = filepath.Dir(base)
-		environmentPath = filepath.Join(basePath, "../../", ".env")
+		_, base, _, _     = runtime.Caller(0)
+		basePath          = filepath.Dir(base)
+		environmentPath   = filepath.Join(basePath, "../../", ".env")
+		configurationPath = filepath.Join(basePath, "../../", "config.yml")
 	)
 
 	err := godotenv.Load(environmentPath)
@@ -49,14 +51,14 @@ func main() {
 		panic(err)
 	}
 
-	// TODO: ADD CLIENT FROM CONFIG FILE
-	// TODO: BOT CONFIGURATION FROM CONFIG FILE
+	// Get configuration
+	config, err := viper.NewViperConfiguration(configurationPath)
 
 	// Create discord client
 	discordBot := discord.NewDiscordClient(&db, dToken)
 
 	// EXECUTE SERVICE
-	fg := service.NewFreeGames(db)
+	fg := service.NewFreeGames(db, config)
 	fg.AddPlatform(epicgames.NewEpicGames())
 	fg.AddClient(discordBot)
 	fg.Run()
