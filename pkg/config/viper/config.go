@@ -24,7 +24,7 @@ func NewViperConfiguration(file string) (freegames.Config, error) {
 	return &viperConfiguration{Configuration: configuration}, nil
 }
 
-func (vc *viperConfiguration) ClientConfig() (freegames.ClientsConfiguration, error) {
+func (vc *viperConfiguration) ClientConfig() (map[string]freegames.ClientConfig, error) {
 	if len(vc.Configuration.Clients) <= 0 {
 		return nil, errors.New("No clients specified")
 	}
