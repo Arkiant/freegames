@@ -55,7 +55,7 @@ func main() {
 	config, err := viper.NewViperConfiguration(configurationPath)
 
 	// Create discord client
-	discordBot := discord.NewDiscordClient(&db, dToken)
+	discordBot := discord.NewDiscordClient(&db)
 
 	// EXECUTE SERVICE
 	fg := service.NewFreeGames(db, config)

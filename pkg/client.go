@@ -2,7 +2,7 @@ package freegames
 
 // Client abstraction
 type Client interface {
-	Execute() error
+	Execute(Config) error
 	GetName() string
 	Close()
 	SendFreeGames() error

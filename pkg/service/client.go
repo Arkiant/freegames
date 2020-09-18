@@ -16,7 +16,7 @@ func (f *Freegames) AddClient(client freegames.Client) *Freegames {
 func executeClients(f *Freegames) {
 
 	for _, v := range f.clients {
-		err := v.Execute()
+		err := v.Execute(f.config)
 		if err != nil {
 			log.Fatalf("Error when try to execute %s bot, error %s", v.GetName(), err.Error())
 		}
