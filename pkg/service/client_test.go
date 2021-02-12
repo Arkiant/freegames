@@ -5,6 +5,7 @@ import (
 
 	freegames "github.com/arkiant/freegames/pkg"
 	inmemClient "github.com/arkiant/freegames/pkg/client/inmem"
+	inmemConfiguration "github.com/arkiant/freegames/pkg/config/inmem"
 	inmemRepository "github.com/arkiant/freegames/pkg/storage/inmem"
 	"github.com/stretchr/testify/assert"
 )
@@ -33,7 +34,8 @@ func TestAddClient(t *testing.T) {
 			db, err := inmemRepository.NewRepository()
 			assert.NoError(t, err)
 
-			fg := NewFreeGames(db)
+			conf, err := inmemConfiguration.NewInmemConfiguration()
+			fg := NewFreeGames(db, conf)
 			for _, v := range tc.Input {
 				fg.AddClient(v)
 			}

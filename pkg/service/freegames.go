@@ -17,10 +17,11 @@ type Freegames struct {
 	db        freegames.Repository
 	platforms []freegames.Platform
 	clients   []freegames.Client
+	config    freegames.Config
 }
 
 // NewFreeGames is a constructor to initialize FreeGames object
-func NewFreeGames(db freegames.Repository) *Freegames {
+func NewFreeGames(db freegames.Repository, config freegames.Config) *Freegames {
 
 	platforms := make([]freegames.Platform, 0)
 	clients := make([]freegames.Client, 0)
@@ -29,6 +30,7 @@ func NewFreeGames(db freegames.Repository) *Freegames {
 		db:        db,
 		platforms: platforms,
 		clients:   clients,
+		config:    config,
 	}
 }
 

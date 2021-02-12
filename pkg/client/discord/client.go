@@ -13,15 +13,14 @@ import (
 // client structure
 type client struct {
 	db       *freegames.Repository
-	token    string
 	dg       *discordgo.Session
 	channel  string
 	commands *freegames.CommandHandler
 }
 
 // NewDiscordClient is a constructor to create a new discord client
-func NewDiscordClient(db *freegames.Repository, token string) freegames.Client {
-	c := &client{db: db, token: token}
+func NewDiscordClient(db *freegames.Repository) freegames.Client {
+	c := &client{db: db}
 	ch := freegames.NewCommandHandler(c)
 	c.commands = ch
 	return c
@@ -35,15 +34,24 @@ func (c *client) GetName() string {
 }
 
 // Execute discord bot
-func (c *client) Execute() error {
-	if c.token == "" {
+func (c *client) Execute(cnf freegames.Config) error {
+
+	clientConfig, err := cnf.ClientConfig()
+	if err != nil {
+		return err
+	}
+
+	config, ok := clientConfig["discord"]
+	if !ok {
+		return errors.New("Can't load configuration")
+	}
+
+	if config.GetToken() == "" {
 		return errors.New("Token need to be configured")
 	}
 
-	var err error
-
 	// 1- AUTHENTICATION
-	c.dg, err = discordgo.New("Bot " + c.token)
+	c.dg, err = discordgo.New("Bot " + config.GetToken())
 	if err != nil {
 		return err
 	}

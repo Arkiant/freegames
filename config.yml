@@ -1,0 +1,6 @@
+clients:
+  - discord:
+      enable: true
+      channel: "#freegames"
+  - platform:
+      - "epicgames"

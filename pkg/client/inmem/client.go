@@ -11,7 +11,7 @@ func NewClient() freegames.Client {
 }
 
 // Execute functionality
-func (cc *client) Execute() error {
+func (cc *client) Execute(conf freegames.Config) error {
 	return nil
 }
 
