@@ -6,9 +6,6 @@ type Client interface {
 	GetName() string
 	Close()
 	SendFreeGames() error
-	SendFreeGamesToChannel(string) error
-	JoinChannel(string) error
-	ExtractChannel(string) string
 	ClientCommands
 }
 

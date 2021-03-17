@@ -84,14 +84,14 @@ func (c *client) SendFreeGames() error {
 
 			fmt.Printf("Connected to channel: %s\n", channel.Name)
 
-			c.SendFreeGamesToChannel(channel.ID)
+			c.sendFreeGamesToChannel(channel.ID)
 		}
 	}
 	return nil
 }
 
-// SendFreeGamesToChannel this method send all games into a specific channel
-func (c *client) SendFreeGamesToChannel(channelID string) error {
+// sendFreeGamesToChannel this method send all games into a specific channel
+func (c *client) sendFreeGamesToChannel(channelID string) error {
 	database := *c.db
 	games, err := database.GetGames()
 	if err != nil {
@@ -105,8 +105,8 @@ func (c *client) SendFreeGamesToChannel(channelID string) error {
 	return nil
 }
 
-// JoinChannel functionality, this implementation use a channel property to save current channel to answer
-func (c *client) JoinChannel(channelID string) error {
+// joinChannel functionality, this implementation use a channel property to save current channel to answer
+func (c *client) joinChannel(channelID string) error {
 	c.channel = channelID
 	return nil
 }
@@ -140,8 +140,8 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 	}
 }
 
-// ExtractChannel extracts channel number concrete to discord channels
-func (c *client) ExtractChannel(channel string) string {
+// extractChannel extracts channel number concrete to discord channels
+func (c *client) extractChannel(channel string) string {
 	re := regexp.MustCompile(`[0-9]+`)
 	extractedChannel := re.FindAll([]byte(channel), -1)
 	if len(extractedChannel) <= 0 {

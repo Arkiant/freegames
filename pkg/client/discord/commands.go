@@ -4,7 +4,7 @@ package discord
 
 // FreegamesCommand create a new freegames command concrete to discord client
 func (c *client) FreegamesCommand() error {
-	err := c.SendFreeGamesToChannel(c.channel)
+	err := c.sendFreeGamesToChannel(c.channel)
 	if err != nil {
 		return err
 	}
