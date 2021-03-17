@@ -47,3 +47,11 @@ func (cc *client) JoinChannel(channel string) error {
 func (cc *client) ExtractChannel(channel string) string {
 	return ""
 }
+
+func (cc *client) FreegamesCommand() error {
+	return nil
+}
+
+func (cc *client) JoinChannelCommand() error {
+	return nil
+}

@@ -140,16 +140,6 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 	}
 }
 
-// FreegamesCommand create a new freegames command concrete to discord client
-func (c *client) FreegamesCommand() freegames.Command {
-	return NewFreeGamesCommand()
-}
-
-// JoinChannelCommand create a new join channel command concrete to discord client
-func (c *client) JoinChannelCommand() freegames.Command {
-	return NewJoinChannelCommand()
-}
-
 // ExtractChannel extracts channel number concrete to discord channels
 func (c *client) ExtractChannel(channel string) string {
 	re := regexp.MustCompile(`[0-9]+`)

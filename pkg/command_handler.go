@@ -22,21 +22,16 @@ const (
 	ChannelID CommandParams = "channelID"
 )
 
-// Command abstraction
-type Command interface {
-	Execute(ctx Context, c Client) error
-}
-
 // CommandHandler has responsability to handler commands
 type CommandHandler struct {
 	commands map[string]Command
 }
 
 // NewCommandHandler create a new command handler registering commands availables
-func NewCommandHandler(cc ClientCommands) *CommandHandler {
+func NewCommandHandler(client Client) *CommandHandler {
 	cmd := make(map[string]Command)
-	cmd["freegames"] = cc.FreegamesCommand()
-	cmd["join"] = cc.JoinChannelCommand()
+	cmd["freegames"] = NewFreegamesCommand(client)
+	cmd["join"] = NewJoinChannelCommand(client)
 	return &CommandHandler{
 		commands: cmd,
 	}
@@ -70,7 +65,7 @@ func ExecuteCommand(ctx Context, c Client, handler *CommandHandler, name string,
 	if !ok {
 		return fmt.Errorf("command not found: %s", name)
 	}
-	err := command.Execute(ctx, c)
+	err := command.Execute()
 	if err != nil {
 		return err
 	}
