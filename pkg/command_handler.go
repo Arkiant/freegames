@@ -40,32 +40,36 @@ func NewCommandHandler(client Client) *CommandHandler {
 // TODO: get prefix from configuration
 const prefix = "!"
 
-// ExtractCommand auxiliar function split string into command, args and any errors ocurried
-func ExtractCommand(content string) (string, []string, error) {
+// ParseCommand parse text and extract command and arguments
+func ParseCommand(text string) (string, string, error) {
 
-	if len(content) <= len(prefix) {
-		return "", nil, errors.New("wrong command composition")
+	if len(text) <= len(prefix) {
+		return "", "", errors.New("wrong command composition")
 	}
 
-	if content[0:len(prefix)] != prefix {
-		return "", nil, errors.New("wrong prefix")
+	if text[0:len(prefix)] != prefix {
+		return "", "", errors.New("wrong prefix")
 	}
 
-	c := content[len(prefix):]
+	c := text[len(prefix):]
 	s := strings.Fields(c)
-	commandName := strings.ToLower(s[0])
-	args := s[1:]
+	commandName := strings.ToLower(s[0]) // Command name is at first
 
-	return commandName, args, nil
+	if len(s) > 1 {
+		args := s[1] // Arguments is after the first element
+		return commandName, args, nil
+	}
+
+	return commandName, "", nil
 }
 
 // ExecuteCommand with context and name
-func ExecuteCommand(ctx Context, c Client, handler *CommandHandler, name string, params []string) error {
+func ExecuteCommand(handler *CommandHandler, name string, arg string) error {
 	command, ok := handler.commands[name]
 	if !ok {
 		return fmt.Errorf("command not found: %s", name)
 	}
-	err := command.Execute()
+	err := command.Execute(arg)
 	if err != nil {
 		return err
 	}

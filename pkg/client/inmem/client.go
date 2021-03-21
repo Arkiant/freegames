@@ -48,10 +48,10 @@ func (cc *client) ExtractChannel(channel string) string {
 	return ""
 }
 
-func (cc *client) FreegamesCommand() error {
+func (cc *client) FreegamesCommand(args string) error {
 	return nil
 }
 
-func (cc *client) JoinChannelCommand() error {
+func (cc *client) JoinChannelCommand(args string) error {
 	return nil
 }

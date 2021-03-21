@@ -49,12 +49,7 @@ func (u *platform) Run() ([]freegames.Game, error) {
 
 // IsFreeGame check if a game is currently free or not
 func (u *platform) IsFreeGame(game freegames.Game) bool {
-
-	if game.Name == "Test Free Game" {
-		return true
-	}
-
-	return false
+	return game.Name == "Test Free Game"
 }
 
 // GetName Get platform name

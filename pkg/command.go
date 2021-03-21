@@ -2,7 +2,7 @@ package freegames
 
 // Command abstraction
 type Command interface {
-	Execute() error
+	Execute(arg string) error
 }
 
 // FreegamesCommand get all new freegames
@@ -10,8 +10,8 @@ type FreegamesCommand struct {
 	receiver Client
 }
 
-func (fc *FreegamesCommand) Execute() error {
-	return fc.receiver.FreegamesCommand()
+func (fc *FreegamesCommand) Execute(arg string) error {
+	return fc.receiver.FreegamesCommand(arg)
 }
 
 func NewFreegamesCommand(client Client) Command {
@@ -23,8 +23,8 @@ type JoinChannelCommand struct {
 	receiver Client
 }
 
-func (fc *JoinChannelCommand) Execute() error {
-	return fc.receiver.JoinChannelCommand()
+func (fc *JoinChannelCommand) Execute(arg string) error {
+	return fc.receiver.JoinChannelCommand(arg)
 }
 
 func NewJoinChannelCommand(client Client) Command {

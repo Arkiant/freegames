@@ -1,10 +1,12 @@
 package discord
 
+import "errors"
+
 // DISCORD COMMANDS IMPLEMENTATION
 
 // FreegamesCommand create a new freegames command concrete to discord client
-func (c *client) FreegamesCommand() error {
-	err := c.sendFreeGamesToChannel(c.channel)
+func (c *client) FreegamesCommand(arg string) error {
+	err := c.sendFreeGamesToChannel(arg)
 	if err != nil {
 		return err
 	}
@@ -13,27 +15,13 @@ func (c *client) FreegamesCommand() error {
 }
 
 // JoinChannelCommand create a new join channel command concrete to discord client
-func (c *client) JoinChannelCommand() error {
-	panic("not implemented command")
+func (c *client) JoinChannelCommand(arg string) error {
+	if len(arg) <= 0 {
+		return errors.New("channel is mandatory")
+	}
+
+	panic("not implemented")
 }
 
 // TODO: Test
 // TODO: Channel
-
-// if len(ctx.Args) <= 0 {
-// 	return errors.New("channel is mandatory")
-// }
-
-// channel := ctx.Args[0]
-
-// extractedChannel := c.ExtractChannel(channel)
-// if extractedChannel == "" {
-// 	return errors.New("invalid channel")
-// }
-
-// err := c.JoinChannel(string(extractedChannel))
-// if err != nil {
-// 	return err
-// }
-
-// return nil

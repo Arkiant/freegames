@@ -13,7 +13,8 @@ import (
 )
 
 const graphqlURL = "https://www.epicgames.com/store/backend/graphql-proxy"
-const gameInfoURL = "https://store-content.ak.epicgames.com/api/es-ES/content/products/%s"
+
+// const gameInfoURL = "https://store-content.ak.epicgames.com/api/es-ES/content/products/%s"
 const gameFreeGames = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=es-ES&country=ES&allowCountries=ES"
 
 // platform platform integration

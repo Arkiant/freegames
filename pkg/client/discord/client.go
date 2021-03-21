@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"regexp"
 
 	freegames "github.com/arkiant/freegames/pkg"
 	"github.com/bwmarrin/discordgo"
@@ -12,18 +11,17 @@ import (
 
 // client structure
 type client struct {
-	db       *freegames.Repository
-	token    string
-	dg       *discordgo.Session
-	channel  string
-	commands *freegames.CommandHandler
+	db    *freegames.Repository
+	token string
+	dg    *discordgo.Session
+	ch    *freegames.CommandHandler
 }
 
 // NewDiscordClient is a constructor to create a new discord client
 func NewDiscordClient(db *freegames.Repository, token string) freegames.Client {
 	c := &client{db: db, token: token}
 	ch := freegames.NewCommandHandler(c)
-	c.commands = ch
+	c.ch = ch
 	return c
 }
 
@@ -37,7 +35,7 @@ func (c *client) GetName() string {
 // Execute discord bot
 func (c *client) Execute() error {
 	if c.token == "" {
-		return errors.New("Token need to be configured")
+		return errors.New("token need to be configured")
 	}
 
 	var err error
@@ -105,47 +103,32 @@ func (c *client) sendFreeGamesToChannel(channelID string) error {
 	return nil
 }
 
-// joinChannel functionality, this implementation use a channel property to save current channel to answer
-func (c *client) joinChannel(channelID string) error {
-	c.channel = channelID
-	return nil
-}
-
 // handlerCommands execute freegames command
 func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
-	command, args, err := freegames.ExtractCommand(m.Content)
+	command, args, err := freegames.ParseCommand(m.Content)
 	if err != nil {
 		log.Printf("Some error ocurried while extract command: %s\n", err.Error())
 		return
 	}
 
-	if c.channel == "" {
-		c.channel = m.ChannelID
-	}
-
-	ctx := freegames.Context{
-		Channel: c.channel,
-		Args:    args,
-	}
-
 	log.Printf("Command %s received from %s", command, m.ChannelID)
 
-	err = freegames.ExecuteCommand(ctx, c, c.commands, command, args)
+	err = freegames.ExecuteCommand(c.ch, command, args)
 	if err != nil {
 		log.Printf("Some error ocurried with command: %s\n", err.Error())
 	}
 }
 
 // extractChannel extracts channel number concrete to discord channels
-func (c *client) extractChannel(channel string) string {
-	re := regexp.MustCompile(`[0-9]+`)
-	extractedChannel := re.FindAll([]byte(channel), -1)
-	if len(extractedChannel) <= 0 {
-		return ""
-	}
-	return string(extractedChannel[0])
-}
+// func (c *client) extractChannel(channel string) string {
+// 	re := regexp.MustCompile(`[0-9]+`)
+// 	extractedChannel := re.FindAll([]byte(channel), -1)
+// 	if len(extractedChannel) <= 0 {
+// 		return ""
+// 	}
+// 	return string(extractedChannel[0])
+// }

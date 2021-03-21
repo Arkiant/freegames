@@ -11,6 +11,6 @@ type Client interface {
 
 // ClientCommands available to implement
 type ClientCommands interface {
-	FreegamesCommand() error
-	JoinChannelCommand() error
+	FreegamesCommand(args string) error
+	JoinChannelCommand(args string) error
 }
