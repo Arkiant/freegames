@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"regexp"
 
 	freegames "github.com/arkiant/freegames/pkg"
 	"github.com/bwmarrin/discordgo"
@@ -11,10 +12,11 @@ import (
 
 // client structure
 type client struct {
-	db    freegames.Repository
-	token string
-	dg    *discordgo.Session
-	ch    *freegames.CommandHandler
+	db      freegames.Repository
+	token   string
+	channel string
+	dg      *discordgo.Session
+	ch      *freegames.CommandHandler
 }
 
 // NewDiscordClient is a constructor to create a new discord client
@@ -116,6 +118,8 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 
 	log.Printf("Command %s received from %s", command, m.ChannelID)
 
+	c.channel = m.ChannelID
+
 	err = freegames.ExecuteCommand(c.ch, command, args)
 	if err != nil {
 		log.Printf("Some error ocurried with command: %s\n", err.Error())
@@ -123,11 +127,11 @@ func (c *client) handlerCommands(s *discordgo.Session, m *discordgo.MessageCreat
 }
 
 // extractChannel extracts channel number concrete to discord channels
-// func (c *client) extractChannel(channel string) string {
-// 	re := regexp.MustCompile(`[0-9]+`)
-// 	extractedChannel := re.FindAll([]byte(channel), -1)
-// 	if len(extractedChannel) <= 0 {
-// 		return ""
-// 	}
-// 	return string(extractedChannel[0])
-// }
+func (c *client) extractChannel(channel string) string {
+	re := regexp.MustCompile(`[0-9]+`)
+	extractedChannel := re.FindAll([]byte(channel), -1)
+	if len(extractedChannel) <= 0 {
+		return ""
+	}
+	return string(extractedChannel[0])
+}

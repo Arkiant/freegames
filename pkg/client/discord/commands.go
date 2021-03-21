@@ -1,12 +1,15 @@
 package discord
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 // DISCORD COMMANDS IMPLEMENTATION
 
 // FreegamesCommand create a new freegames command concrete to discord client
 func (c *client) FreegamesCommand(arg string) error {
-	err := c.sendFreeGamesToChannel(arg)
+	err := c.sendFreeGamesToChannel(c.channel)
 	if err != nil {
 		return err
 	}
@@ -20,7 +23,11 @@ func (c *client) JoinChannelCommand(arg string) error {
 		return errors.New("channel is mandatory")
 	}
 
-	panic("not implemented")
+	channel := c.extractChannel(arg)
+
+	fmt.Printf("Hi! I'm joining to channel %s\n", channel)
+
+	return nil
 }
 
 // TODO: Test
