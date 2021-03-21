@@ -11,14 +11,14 @@ import (
 
 // client structure
 type client struct {
-	db    *freegames.Repository
+	db    freegames.Repository
 	token string
 	dg    *discordgo.Session
 	ch    *freegames.CommandHandler
 }
 
 // NewDiscordClient is a constructor to create a new discord client
-func NewDiscordClient(db *freegames.Repository, token string) freegames.Client {
+func NewDiscordClient(db freegames.Repository, token string) freegames.Client {
 	c := &client{db: db, token: token}
 	ch := freegames.NewCommandHandler(c)
 	c.ch = ch
@@ -90,8 +90,7 @@ func (c *client) SendFreeGames() error {
 
 // sendFreeGamesToChannel this method send all games into a specific channel
 func (c *client) sendFreeGamesToChannel(channelID string) error {
-	database := *c.db
-	games, err := database.GetGames()
+	games, err := c.db.GetGames()
 	if err != nil {
 		return err
 	}

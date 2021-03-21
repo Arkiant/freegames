@@ -15,13 +15,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func main() {
+// ENVIRONMENT VARIABLES
+const (
+	dataBaseURL  = "DATABASE_URL"
+	discordToken = "DISCORD_TOKEN"
+)
 
-	// ENVIRONMENT VARIABLES
-	const (
-		dataBaseURL  = "DATABASE_URL"
-		discordToken = "DISCORD_TOKEN"
-	)
+func main() {
 
 	var (
 		_, base, _, _   = runtime.Caller(0)
@@ -31,7 +31,7 @@ func main() {
 
 	err := godotenv.Load(environmentPath)
 	if err != nil {
-		log.Printf("Can't load .env file error: %s", err.Error())
+		log.Printf("can't load .env file: %s\n", err.Error())
 	}
 
 	dbURL := os.Getenv(dataBaseURL)
@@ -53,7 +53,7 @@ func main() {
 	// TODO: BOT CONFIGURATION FROM CONFIG FILE
 
 	// Create discord client
-	discordBot := discord.NewDiscordClient(&db, dToken)
+	discordBot := discord.NewDiscordClient(db, dToken)
 
 	// EXECUTE SERVICE
 	fg := service.NewFreeGames(db)
