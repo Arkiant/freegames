@@ -1,6 +1,6 @@
 module github.com/arkiant/freegames
 
-go 1.15
+go 1.16
 
 require (
 	github.com/bwmarrin/discordgo v0.22.0
@@ -10,6 +10,6 @@ require (
 	github.com/stretchr/testify v1.6.1
 	go.mongodb.org/mongo-driver v1.4.0
 	golang.org/x/crypto v0.0.0-20191122220453-ac88ee75c92c // indirect
-	golang.org/x/net v0.0.0-20200421231249-e086a090c8fd // indirect
+	golang.org/x/sys v0.0.0-20200323222414-85ca7c5b95cd // indirect
 	gopkg.in/check.v1 v1.0.0-20200227125254-8fa46927fb4f // indirect
 )

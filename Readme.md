@@ -32,6 +32,12 @@ Here is the entire business logic of the non-implementation application.
 $ docker-compose up
 ```
 
+## Build and execution with docker-compose
+
+```
+$ docker-compose up --build
+```
+
 ## Execution without docker-compose
 
 ### 1. Mongo database local

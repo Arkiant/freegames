@@ -3,11 +3,9 @@ services:
   freegames:
     build: .
     restart: always
-    links:
-      - "db:database"
     environment:
-      - "DATABASE_URL=mongodb://db:27017"
-      - "DISCORD_TOKEN=your_token_here"
+      - DATABASE_URL=${DATABASE_URL}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
     depends_on:
       - "db"
   db:

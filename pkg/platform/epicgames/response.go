@@ -20,15 +20,15 @@ type epicgamesResponse struct {
 	} `json:"data"`
 }
 
-type epicgamesGameResponse struct {
-	Data struct {
-		Catalog struct {
-			CatalogOffer struct {
-				Price price `json:"price"`
-			} `json:"catalogOffer"`
-		} `json:"Catalog"`
-	} `json:"data"`
-}
+// type epicgamesGameResponse struct {
+// 	Data struct {
+// 		Catalog struct {
+// 			CatalogOffer struct {
+// 				Price price `json:"price"`
+// 			} `json:"catalogOffer"`
+// 		} `json:"Catalog"`
+// 	} `json:"data"`
+// }
 
 type price struct {
 	TotalPrice struct {

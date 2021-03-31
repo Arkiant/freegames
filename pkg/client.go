@@ -6,13 +6,11 @@ type Client interface {
 	GetName() string
 	Close()
 	SendFreeGames() error
-	SendFreeGamesToChannel(string) error
-	JoinChannel(string) error
-	ExtractChannel(string) string
+	ClientCommands
 }
 
 // ClientCommands available to implement
 type ClientCommands interface {
-	FreegamesCommand() Command
-	JoinChannelCommand() Command
+	FreegamesCommand(args string) error
+	JoinChannelCommand(args string) error
 }
