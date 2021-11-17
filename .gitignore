@@ -16,4 +16,6 @@
 
 .env
 
+.vscode/
+
 .todo

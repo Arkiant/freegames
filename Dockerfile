@@ -12,7 +12,8 @@ RUN apk --no-cache add ca-certificates
 
 WORKDIR /
 
-ENV DATABASE_URL=mongodb://localhost:27017
+ENV DATABASE_URL=""
+ENV DISCORD_TOKEN=""
 
 COPY --from=builder /app/freegames .
 
