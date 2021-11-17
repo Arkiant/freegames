@@ -1,6 +1,6 @@
 package inmem
 
-import freegames "github.com/arkiant/freegames/pkg"
+import freegames "github.com/arkiant/freegames/internal"
 
 // repository is a in memory repository used by tests
 type repository struct {
@@ -8,7 +8,7 @@ type repository struct {
 }
 
 // NewRepository create a new test repository
-func NewRepository() (freegames.Repository, error) {
+func NewRepository() (freegames.GameRepository, error) {
 	repo := repository{
 		database: make([]freegames.Game, 10),
 	}

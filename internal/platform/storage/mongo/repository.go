@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	freegames "github.com/arkiant/freegames/pkg"
+	freegames "github.com/arkiant/freegames/internal"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -18,8 +18,8 @@ type repository struct {
 	timeout    time.Duration
 }
 
-func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(mongoTimeout)*time.Second)
+func newMongoClient(mongoURL string, mongoTimeout time.Duration) (*mongo.Client, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), mongoTimeout)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoURL))
 	if err != nil {
@@ -33,9 +33,9 @@ func newMongoClient(mongoURL string, mongoTimeout int) (*mongo.Client, error) {
 }
 
 // NewMongoRepository create a new mongo repository
-func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout int) (freegames.Repository, error) {
+func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout time.Duration) (freegames.GameRepository, error) {
 	repo := &repository{
-		timeout:    time.Duration(mongoTimeout) * time.Second,
+		timeout:    mongoTimeout,
 		database:   mongoDB,
 		collection: "currentFreeGames",
 	}

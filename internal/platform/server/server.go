@@ -11,6 +11,7 @@ import (
 
 	freegames "github.com/arkiant/freegames/internal/platform/server/handler/freegames"
 	"github.com/arkiant/freegames/kit/command"
+	"github.com/arkiant/freegames/kit/query"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,9 +23,10 @@ type Server struct {
 
 	// deps
 	commandBus command.Bus
+	queryBus   query.Bus
 }
 
-func New(ctx context.Context, host string, port uint, shutdownTimeout time.Duration, commandBus command.Bus) (context.Context, Server) {
+func New(ctx context.Context, host string, port uint, shutdownTimeout time.Duration, commandBus command.Bus, queryBus query.Bus) (context.Context, Server) {
 	srv := Server{
 		engine:   gin.New(),
 		httpAddr: fmt.Sprintf("%s:%d", host, port),
@@ -32,6 +34,7 @@ func New(ctx context.Context, host string, port uint, shutdownTimeout time.Durat
 		shutdownTimeout: shutdownTimeout,
 
 		commandBus: commandBus,
+		queryBus:   queryBus,
 	}
 
 	srv.engine.Use(gin.Recovery(), gin.Logger())
@@ -41,7 +44,7 @@ func New(ctx context.Context, host string, port uint, shutdownTimeout time.Durat
 
 func (s *Server) registerRoutes() {
 
-	s.engine.GET("/freegames", freegames.FreegamesHandler())
+	s.engine.GET("/freegames", freegames.FreegamesHandler(s.queryBus))
 }
 
 func (s *Server) Run(ctx context.Context) error {

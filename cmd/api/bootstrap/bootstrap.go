@@ -7,8 +7,12 @@ import (
 	"runtime"
 	"time"
 
+	freegames "github.com/arkiant/freegames/internal"
+	"github.com/arkiant/freegames/internal/getting"
 	"github.com/arkiant/freegames/internal/platform/bus/inmemory"
+	"github.com/arkiant/freegames/internal/platform/platform/epicgames"
 	"github.com/arkiant/freegames/internal/platform/server"
+	"github.com/arkiant/freegames/internal/platform/storage/mongo"
 	"github.com/joho/godotenv"
 )
 
@@ -29,13 +33,14 @@ func Run() error {
 
 	var (
 		commandBus = inmemory.NewCommandBus()
-		// eventBus   = inmemory.NewEventBus()
+		eventBus   = inmemory.NewEventBus()
+		queryBus   = inmemory.NewQueryBus()
 	)
 
 	var (
 		_, base, _, _   = runtime.Caller(0)
 		basePath        = filepath.Dir(base)
-		environmentPath = filepath.Join(basePath, "../../", ".env")
+		environmentPath = filepath.Join(basePath, "../../../", ".env")
 	)
 
 	err := godotenv.Load(environmentPath)
@@ -48,16 +53,19 @@ func Run() error {
 		dbURL = "mongodb://localhost:27017"
 	}
 
-	dToken := os.Getenv(discordToken)
-	if dToken == "" {
-		dbURL = "token"
+	freegamesRepository, err := mongo.NewMongoRepository(dbURL, "freegames", dbTimeout)
+	if err != nil {
+		return err
 	}
 
-	// db, err := mongo.NewMongoRepository(dbURL, "freegames", 5)
-	// if err != nil {
-	// 	return err
-	// }
+	platforms := []freegames.Platform{
+		epicgames.NewEpicGames(),
+	}
 
-	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, commandBus)
+	freegamesService := getting.NewFreegamesService(freegamesRepository, platforms, eventBus)
+	freegamesQueryHandler := getting.NewFreegamesQueryHandler(freegamesService)
+	queryBus.Register(getting.FregamesQueryType, freegamesQueryHandler)
+
+	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, commandBus, queryBus)
 	return srv.Run(ctx)
 }

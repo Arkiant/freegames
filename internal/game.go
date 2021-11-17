@@ -14,3 +14,10 @@ type Game struct {
 	CreatedAt        time.Time `bson:"created_at" json:"created_at,omitempty"`
 	UpdatedAt        time.Time `bson:"updated_at" json:"updated_at,omitempty"`
 }
+
+type GameRepository interface {
+	GetGames() ([]Game, error)
+	Exists(game Game) bool
+	Store(game Game) error
+	Delete(game Game) error
+}
