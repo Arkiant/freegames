@@ -3,7 +3,6 @@ module github.com/arkiant/freegames
 go 1.17
 
 require (
-	github.com/bwmarrin/discordgo v0.22.0
 	github.com/gin-gonic/gin v1.7.4
 	github.com/google/uuid v1.3.0
 	github.com/joho/godotenv v1.3.0
@@ -21,7 +20,6 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/gorilla/websocket v1.4.0 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/klauspost/compress v1.9.5 // indirect
