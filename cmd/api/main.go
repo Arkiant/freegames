@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	"github.com/arkiant/freegames/cmd/freegames/bootstrap"
+	"github.com/arkiant/freegames/cmd/api/bootstrap"
 )
 
 func main() {
