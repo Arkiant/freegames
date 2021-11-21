@@ -26,7 +26,7 @@ func NewEpicGames() freegames.Platform {
 }
 
 //Run fetch free games from epicgames store
-func (u *platform) Run() ([]freegames.Game, error) {
+func (u *platform) Run() (freegames.FreeGames, error) {
 
 	games := make([]freegames.Game, 0, 4)
 

@@ -48,14 +48,14 @@ func NewMongoRepository(mongoURL, mongoDB string, mongoTimeout time.Duration) (f
 }
 
 // GetGames get all current free games
-func (r *repository) GetGames() ([]freegames.Game, error) {
+func (r *repository) GetGames(platform freegames.Platform) (freegames.FreeGames, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.timeout)
 	defer cancel()
 
-	fg := make([]freegames.Game, 0)
+	fg := make(freegames.FreeGames, 0)
 
 	collection := r.client.Database(r.database).Collection(r.collection)
-	cur, err := collection.Find(ctx, bson.D{})
+	cur, err := collection.Find(ctx, bson.D{{"platform", platform.GetName()}})
 	if err != nil {
 		return fg, err
 	}
@@ -79,7 +79,7 @@ func (r *repository) Exists(game freegames.Game) bool {
 	defer cancel()
 
 	collection := r.client.Database(r.database).Collection(r.collection)
-	filter := bson.M{"name": game.Name}
+	filter := bson.M{"name": game.Name, "platform": game.Platform}
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
 		return false

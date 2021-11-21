@@ -1,28 +1,47 @@
 # Freegames (WIP)
 
-This repository is a experiment in go, we'll try to create a bot that notifies of free games.
+This repository is an experiment in go, we'll try to create a bot that notifies of free games.
 
-## Architecture
+## Infrastructure
 
-We will proceed to explain the architecture of the system. We don't want to be tied to any particular technology in terms of database, client or game platform, so the hexagonal architecture is going to be great for this.
+![infrastructure](./docs/infra.png)
+
+### Discord Bot
+
+The first client connected to the API.
+
+### API
+
+Get all current games from these Platforms:
+
+- Epic Games
+
+### Database
+
+Used for cache and not saturate the platforms used.
+
+## API Architecture
+
+We will proceed to explain the architecture of the system. We don't want to be tied to any particular technology in terms of database, client, or game platform, so the hexagonal architecture is going to be great for this.
 
 ![architecture](./docs/architecture.png)
 
-### Platform
+### Server
 
-Are the gaming platforms inside the microservice, for example we have epicgames store inside to check free games for this platform.
+Receive a Request and throw the command/query bus
 
-### Repo
+### Bus
 
-Repo is the main storage for this microservice, in this example we will use monodb.
+Execute the service, should be CommandBus or QueryBus:
 
-### Client
+- CommandBus used to mutate the state of the application
+- QueryBus to get values
 
-For this example we will try to implement discord client.
-
-### APP
+### Service
 
 Here is the entire business logic of the non-implementation application.
+
+This layer is responsible to create DomainEvents and throwing them to the EventBus if needed.
 
 # Docker
 
