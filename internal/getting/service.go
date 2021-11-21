@@ -28,9 +28,19 @@ func (f FreegamesService) GetFreeGames(ctx context.Context) (interface{}, error)
 			log.Fatal(err)
 		}
 
+		f.saveNewGames(&games)
+
 		freeGames = append(freeGames, games...)
 
 	}
 
 	return freeGames, nil
+}
+
+func (f FreegamesService) saveNewGames(games *[]freegames.Game) {
+	for _, g := range *games {
+		if !f.freegamesRepository.Exists(g) {
+			f.freegamesRepository.Store(g)
+		}
+	}
 }
