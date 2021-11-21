@@ -15,8 +15,14 @@ type Game struct {
 	UpdatedAt        time.Time `bson:"updated_at" json:"updated_at,omitempty"`
 }
 
+type FreeGames []Game
+
+func (f FreeGames) IsEmpty() bool {
+	return len(f) <= 0
+}
+
 type GameRepository interface {
-	GetGames() ([]Game, error)
+	GetGames(platform Platform) (FreeGames, error)
 	Exists(game Game) bool
 	Store(game Game) error
 	Delete(game Game) error
