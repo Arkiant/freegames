@@ -10,7 +10,6 @@ import (
 	freegames "github.com/arkiant/freegames/internal"
 	"github.com/arkiant/freegames/internal/getting"
 	"github.com/arkiant/freegames/internal/platform/platform/epicgames"
-	"github.com/arkiant/freegames/internal/platform/server/handler"
 	"github.com/arkiant/freegames/internal/platform/storage/mongo"
 	"github.com/arkiant/freegames/kit/cqrs/bus/inmemory"
 	"github.com/arkiant/freegames/kit/http/server"
@@ -33,9 +32,9 @@ const (
 func Run() error {
 
 	var (
-		//commandBus = inmemory.NewCommandBus()
-		eventBus = inmemory.NewEventBus()
-		queryBus = inmemory.NewQueryBus()
+		commandBus = inmemory.NewCommandBus()
+		eventBus   = inmemory.NewEventBus()
+		queryBus   = inmemory.NewQueryBus()
 	)
 
 	var (
@@ -67,10 +66,6 @@ func Run() error {
 	freegamesQueryHandler := getting.NewFreegamesQueryHandler(freegamesService)
 	queryBus.Register(getting.FregamesQueryType, freegamesQueryHandler)
 
-	routes := []server.Route{
-		server.NewRoute("GET", "freegames", handler.FreegamesHandler(queryBus)),
-	}
-
-	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, routes)
+	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, Routes(queryBus, commandBus))
 	return srv.Run(ctx)
 }
