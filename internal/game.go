@@ -13,6 +13,7 @@ type Game struct {
 	ProductNamespace string    `json:"productNamespace"`
 	CreatedAt        time.Time `bson:"created_at" json:"created_at,omitempty"`
 	UpdatedAt        time.Time `bson:"updated_at" json:"updated_at,omitempty"`
+	AvailableTo      time.Time `bson:"available_to" json:"available_to"`
 }
 
 type FreeGames []Game

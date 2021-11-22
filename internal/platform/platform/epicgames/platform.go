@@ -1,21 +1,16 @@
 package epicgames
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"time"
 
 	freegames "github.com/arkiant/freegames/internal"
 )
 
-const graphqlURL = "https://www.epicgames.com/store/backend/graphql-proxy"
-
-// const gameInfoURL = "https://store-content.ak.epicgames.com/api/es-ES/content/products/%s"
-const gameFreeGames = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=es-ES&country=ES&allowCountries=ES"
+const gameFreeGames = "https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=en-US&country=ES&allowCountries=ES"
 
 // platform platform integration
 type platform struct{}
@@ -29,36 +24,23 @@ func NewEpicGames() freegames.Platform {
 func (u *platform) Run() (freegames.FreeGames, error) {
 
 	games := make([]freegames.Game, 0, 4)
-
-	jsonData := createQueryFreeGames()
-	request, err := createRequest("POST", graphqlURL, bytes.NewBuffer(jsonData))
+	rq, err := u.getFreeGames()
 	if err != nil {
 		return games, err
 	}
-
-	client := &http.Client{Timeout: time.Second * 10}
-
-	response, err := client.Do(request)
-	if err != nil {
-		return games, err
-	}
-	defer response.Body.Close()
-	data, _ := ioutil.ReadAll(response.Body)
-
-	rq := epicgamesResponse{}
-	json.Unmarshal(data, &rq)
 
 	for _, v := range rq.Data.Catalog.SearchStore.Elements {
-		if u.IsFree(v.Price) {
 
-			var photo string
+		var photo string
 
-			for _, p := range v.KeyImages {
-				if p.Type == "Thumbnail" {
-					photo = p.URL
-				}
+		for _, p := range v.KeyImages {
+			if p.Type == "Thumbnail" {
+				photo = p.URL
 			}
+		}
 
+		if len(v.Promotions.PromotinalOffers) > 0 && len(v.Promotions.PromotinalOffers[0].PromotinalOffersItem) > 0 {
+			availableTo, _ := time.Parse(time.RFC3339, v.Promotions.PromotinalOffers[0].PromotinalOffersItem[0].EndDate)
 			game := freegames.Game{
 				Name:             v.Title,
 				Photo:            photo,
@@ -69,45 +51,39 @@ func (u *platform) Run() (freegames.FreeGames, error) {
 				ProductNamespace: v.Namespace,
 				CreatedAt:        time.Now(),
 				UpdatedAt:        time.Now(),
+				AvailableTo:      availableTo,
 			}
 
 			games = append(games, game)
 		}
+
 	}
 
 	return games, nil
 
 }
 
-// IsFreeGame check if a game is currently free or not
-func (u *platform) IsFreeGame(game freegames.Game) bool {
+func (u *platform) getFreeGames() (epicgamesResponse, error) {
+	rq := epicgamesResponse{}
 
-	response, err := http.Get(gameFreeGames)
+	request, err := createRequest("GET", gameFreeGames, nil)
 	if err != nil {
-		log.Printf("Error ocurried in IsFreeGame method in platform %s: %s\n", u.GetName(), err.Error())
-		return true
+		return rq, err
 	}
 
+	client := &http.Client{Timeout: time.Second * 10}
+
+	response, err := client.Do(request)
+	if err != nil {
+		return rq, err
+	}
 	defer response.Body.Close()
 	data, _ := ioutil.ReadAll(response.Body)
 
-	rq := epicgamesResponse{}
+	fmt.Println(string(data))
+
 	json.Unmarshal(data, &rq)
-
-	for _, newGame := range rq.Data.Catalog.SearchStore.Elements {
-		if game.Name == newGame.Title {
-			log.Printf("No delete %s game, it's free now.\n", game.Name)
-			return true
-		}
-	}
-
-	log.Printf("Deleted %s game, no longer free.\n", game.Name)
-	return false
-}
-
-// IsFree It's business logic exclusive to the epic games platform that checks whether a game is free
-func (u *platform) IsFree(price price) bool {
-	return price.TotalPrice.OriginalPrice == price.TotalPrice.Discount || price.TotalPrice.OriginalPrice == 0
+	return rq, nil
 }
 
 // GetName Get platform name

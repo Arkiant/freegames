@@ -6,6 +6,7 @@ import (
 
 	freegames "github.com/arkiant/freegames/internal"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -55,7 +56,13 @@ func (r *repository) GetGames(platform freegames.Platform) (freegames.FreeGames,
 	fg := make(freegames.FreeGames, 0)
 
 	collection := r.client.Database(r.database).Collection(r.collection)
-	cur, err := collection.Find(ctx, bson.D{{"platform", platform.GetName()}})
+
+	filter := bson.D{
+		{"platform", platform.GetName()},
+		{"available_to", bson.M{"$gte": primitive.NewDateTimeFromTime(time.Now())}},
+	}
+
+	cur, err := collection.Find(ctx, filter)
 	if err != nil {
 		return fg, err
 	}

@@ -14,21 +14,24 @@ type epicgamesResponse struct {
 						Type string `json:"type"`
 					} `json:"keyImages"`
 					ProductURL string `json:"productSlug"`
+					Promotions struct {
+						PromotinalOffers []struct {
+							PromotinalOffersItem []struct {
+								StartDate        string `json:"startDate"`
+								EndDate          string `json:"endDate"`
+								DiscountSettings struct {
+									DiscountTye        string `json:"discountType"`
+									DiscountPercentage int    `json:"discountPercentage"`
+								} `json:"discountSetting"`
+							} `json:"promotionalOffers"`
+						} `json:"promotionalOffers"`
+						UpcomingPromotinalOffers []struct{} `json:"upcomingPromotionalOffers"`
+					} `json:"promotions"`
 				} `json:"elements"`
 			} `json:"searchStore"`
 		} `json:"Catalog"`
 	} `json:"data"`
 }
-
-// type epicgamesGameResponse struct {
-// 	Data struct {
-// 		Catalog struct {
-// 			CatalogOffer struct {
-// 				Price price `json:"price"`
-// 			} `json:"catalogOffer"`
-// 		} `json:"Catalog"`
-// 	} `json:"data"`
-// }
 
 type price struct {
 	TotalPrice struct {
