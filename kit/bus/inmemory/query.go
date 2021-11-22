@@ -18,17 +18,17 @@ func NewQueryBus() *QueryBus {
 	}
 }
 
-// Dispatch implements the command.Bus interface.
-func (b *QueryBus) Dispatch(ctx context.Context, cmd query.Query) (interface{}, error) {
-	handler, ok := b.handlers[cmd.Type()]
+// Dispatch implements the query.Bus interface.
+func (b *QueryBus) Dispatch(ctx context.Context, q query.Query) (interface{}, error) {
+	handler, ok := b.handlers[q.Type()]
 	if !ok {
 		return "", nil
 	}
 
-	return handler.Handle(ctx, cmd)
+	return handler.Handle(ctx, q)
 }
 
-// Register implements the command.Bus interface.
-func (b *QueryBus) Register(cmdType query.Type, handler query.Handler) {
-	b.handlers[cmdType] = handler
+// Register implements the query.Bus interface.
+func (b *QueryBus) Register(queryType query.Type, handler query.Handler) {
+	b.handlers[queryType] = handler
 }
