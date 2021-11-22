@@ -30,20 +30,11 @@ func (u *platform) Run() (freegames.FreeGames, error) {
 	}
 
 	for _, v := range rq.Data.Catalog.SearchStore.Elements {
-
-		var photo string
-
-		for _, p := range v.KeyImages {
-			if p.Type == "Thumbnail" {
-				photo = p.URL
-			}
-		}
-
-		if len(v.Promotions.PromotinalOffers) > 0 && len(v.Promotions.PromotinalOffers[0].PromotinalOffersItem) > 0 {
+		if isFreeGame(v.Promotions) {
 			availableTo, _ := time.Parse(time.RFC3339, v.Promotions.PromotinalOffers[0].PromotinalOffersItem[0].EndDate)
 			game := freegames.Game{
 				Name:             v.Title,
-				Photo:            photo,
+				Photo:            searchImage(v.KeyImages),
 				Platform:         u.GetName(),
 				URL:              fmt.Sprintf("https://www.epicgames.com/store/es-ES/product/%s", v.ProductURL),
 				Slug:             v.ProductURL,
@@ -61,6 +52,19 @@ func (u *platform) Run() (freegames.FreeGames, error) {
 
 	return games, nil
 
+}
+
+func searchImage(images keyImages) string {
+	for _, p := range images {
+		if p.Type == "Thumbnail" {
+			return p.URL
+		}
+	}
+	return ""
+}
+
+func isFreeGame(p promotions) bool {
+	return len(p.PromotinalOffers) > 0 && len(p.PromotinalOffers[0].PromotinalOffersItem) > 0
 }
 
 func (u *platform) getFreeGames() (epicgamesResponse, error) {
