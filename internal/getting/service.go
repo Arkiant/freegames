@@ -22,19 +22,19 @@ func (f FreegamesService) GetFreeGames(ctx context.Context) (interface{}, error)
 
 	var freeGames freegames.FreeGames
 
-	for _, v := range f.platforms {
+	for _, platform := range f.platforms {
 
-		gamesCached, err := f.getCachedGames(v)
+		cachedGames, err := f.getCachedGames(platform)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		if !gamesCached.IsEmpty() {
-			freeGames = append(freeGames, gamesCached...)
+		if !cachedGames.IsEmpty() {
+			freeGames = append(freeGames, cachedGames...)
 			continue
 		}
 
-		games, err := v.Run()
+		games, err := platform.Run()
 		if err != nil {
 			log.Fatal(err)
 		}
