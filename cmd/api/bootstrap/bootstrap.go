@@ -9,10 +9,10 @@ import (
 
 	freegames "github.com/arkiant/freegames/internal"
 	"github.com/arkiant/freegames/internal/getting"
-	"github.com/arkiant/freegames/internal/platform/bus/inmemory"
 	"github.com/arkiant/freegames/internal/platform/platform/epicgames"
 	"github.com/arkiant/freegames/internal/platform/server"
 	"github.com/arkiant/freegames/internal/platform/storage/mongo"
+	"github.com/arkiant/freegames/kit/bus/inmemory"
 	"github.com/joho/godotenv"
 )
 
