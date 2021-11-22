@@ -1,10 +1,10 @@
-package freegames
+package handler
 
 import (
 	"net/http"
 
 	"github.com/arkiant/freegames/internal/getting"
-	"github.com/arkiant/freegames/kit/query"
+	"github.com/arkiant/freegames/kit/cqrs/query"
 	"github.com/gin-gonic/gin"
 )
 

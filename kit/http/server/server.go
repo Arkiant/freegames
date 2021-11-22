@@ -9,9 +9,6 @@ import (
 	"os/signal"
 	"time"
 
-	freegames "github.com/arkiant/freegames/internal/platform/server/handler/freegames"
-	"github.com/arkiant/freegames/kit/command"
-	"github.com/arkiant/freegames/kit/query"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,20 +18,27 @@ type Server struct {
 
 	shutdownTimeout time.Duration
 
-	// deps
-	commandBus command.Bus
-	queryBus   query.Bus
+	routes []Route
 }
 
-func New(ctx context.Context, host string, port uint, shutdownTimeout time.Duration, commandBus command.Bus, queryBus query.Bus) (context.Context, Server) {
+type Route struct {
+	method   string
+	endpoint string
+	handler  gin.HandlerFunc
+}
+
+func NewRoute(method, endpoint string, handler gin.HandlerFunc) Route {
+	return Route{method: method, endpoint: endpoint, handler: handler}
+}
+
+func New(ctx context.Context, host string, port uint, shutdownTimeout time.Duration, routes []Route) (context.Context, Server) {
 	srv := Server{
 		engine:   gin.New(),
 		httpAddr: fmt.Sprintf("%s:%d", host, port),
 
 		shutdownTimeout: shutdownTimeout,
 
-		commandBus: commandBus,
-		queryBus:   queryBus,
+		routes: routes,
 	}
 
 	srv.engine.Use(gin.Recovery(), gin.Logger())
@@ -43,8 +47,9 @@ func New(ctx context.Context, host string, port uint, shutdownTimeout time.Durat
 }
 
 func (s *Server) registerRoutes() {
-
-	s.engine.GET("/freegames", freegames.FreegamesHandler(s.queryBus))
+	for _, route := range s.routes {
+		s.engine.Handle(route.method, route.endpoint, route.handler)
+	}
 }
 
 func (s *Server) Run(ctx context.Context) error {

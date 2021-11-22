@@ -5,7 +5,7 @@ package commandmocks
 import (
 	context "context"
 
-	command "github.com/arkiant/freegames/kit/command"
+	command "github.com/arkiant/freegames/kit/cqrs/command"
 
 	mock "github.com/stretchr/testify/mock"
 )

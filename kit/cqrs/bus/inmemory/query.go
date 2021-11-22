@@ -3,7 +3,7 @@ package inmemory
 import (
 	"context"
 
-	"github.com/arkiant/freegames/kit/query"
+	"github.com/arkiant/freegames/kit/cqrs/query"
 )
 
 // QueryBus is an in-memory implementation of the command.Bus.
