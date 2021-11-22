@@ -5,7 +5,7 @@ package eventmocks
 import (
 	context "context"
 
-	event "github.com/arkiant/freegames/kit/event"
+	event "github.com/arkiant/freegames/kit/cqrs/event"
 	mock "github.com/stretchr/testify/mock"
 )
 

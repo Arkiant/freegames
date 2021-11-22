@@ -3,7 +3,7 @@ package inmemory
 import (
 	"context"
 
-	"github.com/arkiant/freegames/kit/command"
+	"github.com/arkiant/freegames/kit/cqrs/command"
 )
 
 // CommandBus is an in-memory implementation of the command.Bus.

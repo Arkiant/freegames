@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/arkiant/freegames/kit/query"
+	"github.com/arkiant/freegames/kit/cqrs/query"
 )
 
 const FregamesQueryType query.Type = "query.getting.freegames"

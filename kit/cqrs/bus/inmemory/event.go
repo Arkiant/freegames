@@ -3,7 +3,7 @@ package inmemory
 import (
 	"context"
 
-	"github.com/arkiant/freegames/kit/event"
+	"github.com/arkiant/freegames/kit/cqrs/event"
 )
 
 // EventBus is an in-memory implementation of the event.Bus.

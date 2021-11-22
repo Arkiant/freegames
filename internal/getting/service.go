@@ -5,7 +5,7 @@ import (
 	"log"
 
 	freegames "github.com/arkiant/freegames/internal"
-	"github.com/arkiant/freegames/kit/event"
+	"github.com/arkiant/freegames/kit/cqrs/event"
 )
 
 type FreegamesService struct {
