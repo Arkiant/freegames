@@ -22,6 +22,7 @@ func (f FreeGames) IsEmpty() bool {
 	return len(f) <= 0
 }
 
+//go:generate mockery --case=snake --outpkg=mockrepository --output=platform/storage/mockrepository --name=GameRepository
 type GameRepository interface {
 	GetGames(platform Platform) (FreeGames, error)
 	Exists(game Game) bool
