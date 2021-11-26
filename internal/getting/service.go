@@ -2,20 +2,17 @@ package getting
 
 import (
 	"context"
-	"log"
 
 	freegames "github.com/arkiant/freegames/internal"
-	"github.com/arkiant/freegames/kit/cqrs/event"
 )
 
 type FreegamesService struct {
 	freegamesRepository freegames.GameRepository
 	platforms           []freegames.Platform
-	eventBus            event.Bus
 }
 
-func NewFreegamesService(freegamesRepository freegames.GameRepository, platforms []freegames.Platform, eventBus event.Bus) FreegamesService {
-	return FreegamesService{freegamesRepository: freegamesRepository, platforms: platforms, eventBus: eventBus}
+func NewFreegamesService(freegamesRepository freegames.GameRepository, platforms []freegames.Platform) FreegamesService {
+	return FreegamesService{freegamesRepository: freegamesRepository, platforms: platforms}
 }
 
 func (f FreegamesService) GetFreeGames(ctx context.Context) (interface{}, error) {
@@ -26,7 +23,7 @@ func (f FreegamesService) GetFreeGames(ctx context.Context) (interface{}, error)
 
 		cachedGames, err := f.getCachedGames(platform)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		if !cachedGames.IsEmpty() {
@@ -36,7 +33,7 @@ func (f FreegamesService) GetFreeGames(ctx context.Context) (interface{}, error)
 
 		games, err := platform.Run()
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
 		f.saveNewGames(&games)

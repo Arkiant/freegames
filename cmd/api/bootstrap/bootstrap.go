@@ -37,6 +37,8 @@ func Run() error {
 		queryBus   = inmemory.NewQueryBus()
 	)
 
+	_ = eventBus
+
 	var (
 		_, base, _, _   = runtime.Caller(0)
 		basePath        = filepath.Dir(base)
@@ -62,7 +64,7 @@ func Run() error {
 		epicgames.NewEpicGames(),
 	}
 
-	freegamesService := getting.NewFreegamesService(freegamesRepository, platforms, eventBus)
+	freegamesService := getting.NewFreegamesService(freegamesRepository, platforms)
 	freegamesQueryHandler := getting.NewFreegamesQueryHandler(freegamesService)
 	queryBus.Register(getting.FregamesQueryType, freegamesQueryHandler)
 
