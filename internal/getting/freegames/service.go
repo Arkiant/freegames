@@ -1,4 +1,4 @@
-package getting
+package freegames
 
 import (
 	"context"
@@ -6,16 +6,16 @@ import (
 	freegames "github.com/arkiant/freegames/internal"
 )
 
-type FreegamesService struct {
+type Service struct {
 	freegamesRepository freegames.GameRepository
 	platforms           []freegames.Platform
 }
 
-func NewFreegamesService(freegamesRepository freegames.GameRepository, platforms []freegames.Platform) FreegamesService {
-	return FreegamesService{freegamesRepository: freegamesRepository, platforms: platforms}
+func NewService(freegamesRepository freegames.GameRepository, platforms ...freegames.Platform) Service {
+	return Service{freegamesRepository: freegamesRepository, platforms: platforms}
 }
 
-func (f FreegamesService) GetFreeGames(ctx context.Context) (interface{}, error) {
+func (f Service) GetFreeGames(ctx context.Context) (interface{}, error) {
 
 	var freeGames freegames.FreeGames
 
@@ -44,11 +44,11 @@ func (f FreegamesService) GetFreeGames(ctx context.Context) (interface{}, error)
 	return freeGames, nil
 }
 
-func (f FreegamesService) getCachedGames(platform freegames.Platform) (freegames.FreeGames, error) {
+func (f Service) getCachedGames(platform freegames.Platform) (freegames.FreeGames, error) {
 	return f.freegamesRepository.GetGames(platform)
 }
 
-func (f FreegamesService) saveNewGames(games *freegames.FreeGames) {
+func (f Service) saveNewGames(games *freegames.FreeGames) {
 	for _, g := range *games {
 		if !f.freegamesRepository.Exists(g) {
 			f.freegamesRepository.Store(g)

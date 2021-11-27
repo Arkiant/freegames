@@ -1,4 +1,4 @@
-package getting_test
+package freegames
 
 import (
 	"context"
@@ -7,7 +7,6 @@ import (
 	"time"
 
 	freegames "github.com/arkiant/freegames/internal"
-	"github.com/arkiant/freegames/internal/getting"
 	"github.com/arkiant/freegames/internal/platform/platform/mockplatform"
 	"github.com/arkiant/freegames/internal/platform/storage/mockrepository"
 	"github.com/arkiant/freegames/kit/clock"
@@ -126,7 +125,7 @@ func TestGetFreeGames(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			service := getting.NewFreegamesService(tc.repository, tc.platforms)
+			service := NewService(tc.repository, tc.platforms...)
 			response, err := service.GetFreeGames(context.Background())
 			if tc.err != nil {
 				assert.Equal(t, tc.err, err)

@@ -7,8 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	freegames "github.com/arkiant/freegames/internal"
-	"github.com/arkiant/freegames/internal/getting"
+	"github.com/arkiant/freegames/internal/getting/freegames"
 	"github.com/arkiant/freegames/internal/platform/platform/epicgames"
 	"github.com/arkiant/freegames/internal/platform/storage/mongo"
 	"github.com/arkiant/freegames/kit/cqrs/bus/inmemory"
@@ -60,13 +59,9 @@ func Run() error {
 		return err
 	}
 
-	platforms := []freegames.Platform{
-		epicgames.NewEpicGames(),
-	}
-
-	freegamesService := getting.NewFreegamesService(freegamesRepository, platforms)
-	freegamesQueryHandler := getting.NewFreegamesQueryHandler(freegamesService)
-	queryBus.Register(getting.FregamesQueryType, freegamesQueryHandler)
+	freegamesService := freegames.NewService(freegamesRepository, epicgames.NewEpicGames())
+	freegamesQueryHandler := freegames.NewQueryHandler(freegamesService)
+	queryBus.Register(freegames.QueryType, freegamesQueryHandler)
 
 	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, Routes(queryBus, commandBus))
 	return srv.Run(ctx)
