@@ -39,15 +39,3 @@ func (c ClockStub) Now() time.Time {
 func (ClockStub) After(d time.Duration) <-chan time.Time {
 	return time.After(d)
 }
-
-// TimeIn returns the time in UTC if the name is "" or "UTC".
-// It returns the local time if the name is "Local".
-// Otherwise, the name is taken to be a location name in
-// the IANA Time Zone database, such as "Europe/Madrid".
-func TimeIn(t time.Time, locationName string) (time.Time, error) {
-	loc, err := time.LoadLocation(locationName)
-	if err == nil {
-		t = t.In(loc)
-	}
-	return t, err
-}
