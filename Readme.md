@@ -2,6 +2,8 @@
 
 This repository is an experiment in go, we'll try to create a bot that notifies of free games.
 
+[![CircleCI](https://circleci.com/gh/Arkiant/freegames/tree/master.svg?style=svg)](https://circleci.com/gh/Arkiant/freegames/tree/master)
+
 ## Infrastructure
 
 ![infrastructure](./docs/infra.png)
