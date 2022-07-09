@@ -21,6 +21,9 @@ jobs:
       - run:
           name: Install Dependencies
           command: go mod download
+      - run:
+          name: Install testsum dependency
+          command: go get -u gotest.tools/gotestsum
       - save_cache:
           key: go-mod-v4-{{ checksum "go.sum" }}
           paths:
