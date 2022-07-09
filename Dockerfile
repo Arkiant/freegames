@@ -1,26 +1,30 @@
 FROM golang:latest AS builder
 
-WORKDIR /app
+# https://medium.com/@chemidy/create-the-smallest-and-secured-golang-docker-image-based-on-scratch-4752223b7324
+RUN apt-get update; \
+    apt-get install -y --no-install-recommends \
+    git;\
+    rm -rf /var/lib/apt/lists/*
 
-COPY . .
-
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo /app/cmd/api
-
-FROM alpine:latest 
-
-RUN apk --no-cache add ca-certificates
+COPY . /app
 
 WORKDIR /app
 
-COPY --from=builder /app/.env .
+RUN go mod download
 
-WORKDIR /
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -ldflags="-w -s" -o \
+    /go/bin/release /app/cmd/api
+
+# https://github.com/GoogleContainerTools/distroless
+FROM gcr.io/distroless/static
+
+# change this feature using go:embed
+COPY --from=builder /app/.env /app/.env
+COPY --from=builder /go/bin/release /go/bin/release
 
 ENV DATABASE_URL=""
 ENV DISCORD_TOKEN=""
 
 EXPOSE 8080
-
-COPY --from=builder /app/api .
-
-CMD ["./api"]
+ENTRYPOINT ["/go/bin/release"]
