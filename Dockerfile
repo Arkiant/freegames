@@ -19,8 +19,6 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
 # https://github.com/GoogleContainerTools/distroless
 FROM gcr.io/distroless/static
 
-# change this feature using go:embed
-COPY --from=builder /app/.env /app/.env
 COPY --from=builder /go/bin/release /go/bin/release
 
 ENV DATABASE_URL=""

@@ -2,11 +2,10 @@ package bootstrap
 
 import (
 	"context"
-	"os"
-	"path/filepath"
-	"runtime"
+	"log"
 	"time"
 
+	main "github.com/arkiant/freegames"
 	"github.com/arkiant/freegames/internal/getting/freegames"
 	"github.com/arkiant/freegames/internal/platform/platform/epicgames"
 	"github.com/arkiant/freegames/internal/platform/storage/mongo"
@@ -17,8 +16,7 @@ import (
 
 // ENVIRONMENT VARIABLES
 const (
-	dataBaseURL  = "DATABASE_URL"
-	discordToken = "DISCORD_TOKEN"
+	dataBaseURL = "DATABASE_URL"
 )
 
 const (
@@ -38,20 +36,20 @@ func Run() error {
 
 	_ = eventBus
 
-	var (
-		_, base, _, _   = runtime.Caller(0)
-		basePath        = filepath.Dir(base)
-		environmentPath = filepath.Join(basePath, "../../../", ".env")
-	)
+	file, err := main.ReadEnvironmentFile()
+	if err != nil {
+		panic(err)
+	}
 
-	err := godotenv.Load(environmentPath)
+	environment, err := godotenv.Parse(file)
 	if err != nil {
 		return err
 	}
 
-	dbURL := os.Getenv(dataBaseURL)
-	if dbURL == "" {
+	dbURL, ok := environment[dataBaseURL]
+	if !ok {
 		dbURL = "mongodb://localhost:27017"
+		log.Println("Can't get the database url, getting the default value")
 	}
 
 	freegamesRepository, err := mongo.NewMongoRepository(dbURL, "freegames", dbTimeout)
