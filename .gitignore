@@ -15,6 +15,9 @@
 # vendor/
 
 .env
+!.env.*
+
+tests-output/
 
 .vscode/
 
